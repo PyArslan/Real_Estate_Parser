@@ -1,0 +1,8 @@
+dist/
+build/
+__pycache__/
+Parse_Files/
+*.exe
+*.spec
+*.txt
+*.xlsx
