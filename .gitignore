@@ -6,3 +6,4 @@ Parse_Files/
 *.spec
 *.txt
 *.xlsx
+testing.py
