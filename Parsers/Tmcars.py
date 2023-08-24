@@ -125,9 +125,25 @@ class Tmcars:
                 continue
 
             for info in info_list:
-                if "Цена" in info.text.split(":")[0]:
-                    price = info.text.split(":")
-                    card.append([price[0], price[1][:-3].replace(".","")])
+                data = info.text.split(":")[0]
+                if "Цена" in data:
+                    price = info.text.split(":")[1][:-3].replace(".","")
+                    card.append(["Цена предложения ТМТ", price])
+                
+                elif "Категория" in data:
+                    target = info.text.split(":")[1]
+                    target = target.split(" / ")[1][:target.split(" / ")[1].find(" ")]
+                    card.append(["Цель", target])
+
+                elif "Этаж" == data.strip():
+                    card.append(["На каком этаже", info.text.split(":")[1]])
+
+                elif "Ремонт" in data:
+                    card.append(["Состояние ремонта", info.text.split(":")[1]])
+
+                elif "Номер телефона" in data:
+                    card.append(["Конт.номер", info.text.split(":")[1]])
+
                 else:
                     card.append(info.text.split(":"))
 
@@ -139,4 +155,6 @@ class Tmcars:
         self.Save.links(link_list)
 
 if __name__ == "__main__":
-    Tmcars(Find, Save).parse_cards()
+    Tmcars = Tmcars(Find, Save)
+    Tmcars.parse_links()
+    Tmcars.parse_cards()
