@@ -1,7 +1,10 @@
 import tkinter as Tk
 from tkinter.scrolledtext import ScrolledText
 
-from Parser import Tmcars, Find
+from Parsers.Tmcars import Tmcars
+from Parsers.Modules.Find import Find
+from Parsers.Modules.Save import Save
+
 import os
 from threading import Thread,Event
 
@@ -13,7 +16,7 @@ class Controller(object):
 
     def start(self):
         self.stop_threads.clear()
-        self.thread1 = Thread(target = lambda: Tmcars(Find).parse_links())
+        self.thread1 = Thread(target = lambda: Tmcars(Find, Save).parse_links())
         self.thread1.start()
 
     def finish(self):
