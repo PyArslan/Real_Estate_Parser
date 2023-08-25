@@ -4,7 +4,7 @@ import datetime
 class Save:
 
     @staticmethod
-    def to_xlsx(estate_list, count=0):
+    def to_xlsx(estate_list, site, count=0):
 
         data = {
             'Дата публикации': [i['Дата публикации'] if 'Дата публикации' in i else 'Не указано' for i in estate_list],            
@@ -20,9 +20,9 @@ class Save:
             'Планировка': [i['Планировка'] if 'Планировка' in i else 'Не указано' for i in estate_list],
             'На каком этаже': [i['На каком этаже'] if 'На каком этаже' in i else 'Не указано' for i in estate_list],
             'Этажность дома': [i['Этажность дома'] if 'Этажность дома' in i else 'Не указано' for i in estate_list],
-            'Общая площадь': [i['Общая площадь'] if 'Общая площадь' in i else 'Не указано' for i in estate_list],
+            'Общая площадь': [float(i['Общая площадь']) if 'Общая площадь' in i else 'Не указано' for i in estate_list],
             'Цена предложения ТМТ': [int(i['Цена предложения ТМТ']) if 'Цена предложения ТМТ' in i else 'Не указано' for i in estate_list],
-            'Цена за 1 кв.метр': [int(i['Цена за 1 кв метр']) if 'Цена за 1 кв метр' in i else 'Не указано' for i in estate_list],
+            'Цена за 1 кв.метр': [float(i['Цена за 1 кв.метр']) if 'Цена за 1 кв метр' in i else 'Не указано' for i in estate_list],
             'Коммуникации': [i['Коммуникации'] if 'Коммуникации' in i else 'Не указано' for i in estate_list],
             'Санузел': [i['Санузел'] if 'Санузел' in i else 'Не указано' for i in estate_list],
             'Состояние ремонта': [i['Состояние ремонта'] if 'Состояние ремонта' in i else 'Не указано' for i in estate_list],
@@ -36,12 +36,12 @@ class Save:
         df.index += 1
 
         today = datetime.datetime.today().strftime('%d-%m-%Y_%H-%M-%S')
-        df.to_excel(f'Parse_Files\\Tmcars_{today}_{count}_.xlsx', index=False)
+        df.to_excel(f'Parse_Files\\{site}_{today}_{count}_.xlsx', index=False)
 
     @staticmethod
-    def links(link_list):
+    def links(link_list, site):
         
-        with open("Parse_Files\\Links.txt", "w", encoding="utf8") as file:
+        with open(f"Parse_Files\\Links_{site}.txt", "w", encoding="utf8") as file:
             for i in link_list:
                 file.write(f"{i},")
 
