@@ -37,6 +37,7 @@ class Tmcars:
         return formatted_date
 
     def parse_links(self):
+        """ TODO: for i in count_pages """
         card_list = self.Find.xs("//div[@class='item7-card-img']/a")
 
         link_list = []
@@ -44,11 +45,11 @@ class Tmcars:
         for card in card_list:
             link_list.append(card.get_attribute('href'))
 
-        self.Save.links(link_list)
+        self.Save.links(link_list, "Tmcars")
 
 
     def parse_cards(self):
-        with open("Parse_Files\\Links.txt", "r", encoding="utf8") as file:
+        with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()
 
@@ -56,8 +57,8 @@ class Tmcars:
 
         for count in range(len(link_list)):
             if count % 10 == 0 and count != 0:
-                self.Save.to_xlsx(estate_list, count)
-                self.Save.links(link_list)
+                self.Save.to_xlsx(estate_list, "Tmcars", count)
+                self.Save.links(link_list, "Tmcars")
 
 
             link = link_list.pop(0)
@@ -151,7 +152,7 @@ class Tmcars:
             estate_list.append({key.strip(): value.strip() for key,value in card})
 
 
-        self.Save.to_xlsx(estate_list, count)
+        self.Save.to_xlsx(estate_list, "Tmcars", count)
         self.Save.links(link_list)
 
 if __name__ == "__main__":
