@@ -49,6 +49,7 @@ class Tmcars:
 
 
     def parse_cards(self):
+        """ TODO: + count save """
         with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()

@@ -21,6 +21,7 @@ class Turkmenportal:
         self.Save.links(link_list, "Turkmenportal")
 
     def parse_cards(self):
+        """ TODO: + count save """
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()
