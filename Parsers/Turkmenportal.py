@@ -9,19 +9,30 @@ class Turkmenportal:
         self.Save = Save
         self.Find.get("https://turkmenportal.com/estates/nedvizhimost")
 
-    def parse_links(self):
-        """ TODO: for i in count_pages """
-        card_list = self.Find.xs("//div[@class='entry-title']/a")
-
+    def parse_links(self, count_pages=0):
         link_list = []
 
-        for card in card_list:
-            link_list.append(card.get_attribute('href'))
+        if count_pages == 0:
+            pages = self.Find.x("//div[@class='row sub_categories horizontal minimized dynamic']").text.split("(")
+
+            for elem in pages:
+                pages[pages.index(elem)] = ''.join([i for i in elem if i.isdigit()])
+
+            pages = [int(i) for i in pages if i]
+            count_pages = round(sum(pages)/20)
+            print(count_pages)
+            
+
+        for page in range(1, count_pages+1):
+            self.Find.get(f"https://turkmenportal.com/estates/a/index?Estates_sort=date_added.desc&page={page}&path=nedvizhimost")
+            card_list = self.Find.xs("//div[@class='entry-title']/a")
+
+            for card in card_list:
+                link_list.append(card.get_attribute('href'))
 
         self.Save.links(link_list, "Turkmenportal")
 
     def parse_cards(self):
-        """ TODO: + count save """
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()
@@ -29,7 +40,7 @@ class Turkmenportal:
         estate_list = []
 
         for count in range(len(link_list)):
-            if count % 10 == 0 and count != 0:
+            if count % 1000 == 0 and count != 0:
                 self.Save.to_xlsx(estate_list, "Turkmenportal", count)
                 self.Save.links(link_list, "Turkmenportal")
 
@@ -83,5 +94,5 @@ class Turkmenportal:
 
 if __name__ == "__main__":
     Turkmenportal = Turkmenportal(Find, Save)
-    Turkmenportal.parse_cards()
+    Turkmenportal.parse_links(0)
 

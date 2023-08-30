@@ -57,20 +57,24 @@ class Naydizdes:
         
 
 
-    def parse_links(self):
-        """ TODO: Loop """
-        card_list = self.Find.xs("//a[@class='item_link clearfix']")
-
+    def parse_links(self, count_pages=0):
         link_list = []
 
-        for i in card_list:
-            link_list.append(i.get_attribute('href'))
+        if count_pages == 0:
+            count_pages = int(self.Find.x("//div[@class='paginator']").text.split(" ")[-2])
+            print(count_pages)
+
+        for page in range(1, count_pages+1):
+            self.Find.get(f"https://www.naydizdes.com/nedvijimost/{page}/")
+            card_list = self.Find.xs("//a[@class='item_link clearfix']")
+
+            for i in card_list:
+                link_list.append(i.get_attribute('href'))
 
         self.Save.links(link_list, "Naydizdes")
 
 
     def parse_cards(self):
-        """ TODO: increase count save """
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
             file.close()
@@ -78,7 +82,7 @@ class Naydizdes:
         estate_list = []
 
         for count in range(len(link_list)):
-            if count % 10 == 0 and count != 0:
+            if count % 1000 == 0 and count != 0:
                 self.Save.to_xlsx(estate_list, "Naydizdes", count)
                 self.Save.links(link_list, "Naydizdes")
 
@@ -129,6 +133,6 @@ class Naydizdes:
 
 if __name__ == "__main__":
     Naydizdes = Naydizdes(Find, Save)
-    Naydizdes.parse_links()
-    Naydizdes.parse_cards()
+    Naydizdes.parse_links(0)
+    # Naydizdes.parse_cards()
 

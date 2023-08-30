@@ -23,19 +23,26 @@ class Jayym:
 
         return array
 
-    def parse_links(self):
+    def parse_links(self, count_pages=0):
         """ TODO: Loop """
-        card_list = self.Find.xs("//section[@id='listings']/article/div[2]/a")
-
         link_list = []
 
-        for i in card_list:
-            link_list.append(i.get_attribute('href'))
+        if count_pages == 0:
+            count_pages = self.Find.x("//li[@class='transit']").text
+            count_pages = int(count_pages[count_pages.rfind(" "):])
+            print(count_pages)
+
+
+        for page in range(1, count_pages+1):
+            self.Find.get(f"https://jayym.com/properties/index{page}.html")
+            card_list = self.Find.xs("//section[@id='listings']/article/div[2]/a")
+
+            for i in card_list:
+                link_list.append(i.get_attribute('href'))
 
         self.Save.links(link_list, "Jayym")
 
     def parse_cards(self):
-        """ TODO: increase count save """
         with open(f"Parse_Files\\Links_Jayym.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
             file.close()
@@ -95,4 +102,4 @@ class Jayym:
 
 
 if __name__ == "__main__":
-    Jayym(Find, Save).parse_cards()
+    Jayym(Find, Save).parse_links(0)
