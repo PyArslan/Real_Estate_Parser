@@ -70,7 +70,7 @@ class Naydizdes:
 
 
     def parse_cards(self):
-        """ TODO: + count save """
+        """ TODO: increase count save """
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
             file.close()
@@ -125,6 +125,10 @@ class Naydizdes:
         self.Save.to_xlsx(estate_list, "Naydizdes", count)
         self.Save.links(link_list, "Naydizdes")
 
+
+
 if __name__ == "__main__":
-    Naydizdes(Find, Save).parse_cards()
+    Naydizdes = Naydizdes(Find, Save)
+    Naydizdes.parse_links()
+    Naydizdes.parse_cards()
 
