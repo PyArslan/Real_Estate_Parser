@@ -29,7 +29,7 @@ class Find:
 
         self.today = datetime.datetime.today().strftime('%d-%m-%Y_%H-%M-%S')
         self.driver = webdriver.Chrome(options=option)
-        # self.driver.set_window_position(-10000, 0, windowHandle='current')
+        self.driver.set_window_position(-10000, 0, windowHandle='current')
 
         self.NSEE = NoSuchElementException
         self.TE = TimeoutException
