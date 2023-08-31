@@ -2,26 +2,66 @@ import tkinter as Tk
 from tkinter.scrolledtext import ScrolledText
 
 from Parsers.Tmcars import Tmcars
+from Parsers.Turkmenportal import Turkmenportal
+from Parsers.Naydizdes import Naydizdes
+from Parsers.Jayym import Jayym   
+
 from Parsers.Modules.Find import Find
 from Parsers.Modules.Save import Save
 
 import os
+from time import sleep
 from threading import Thread,Event
 
 class Controller(object):
     
     def __init__(self):
-        self.thread1 = None
+        self.thread_Tmcars = None
+        self.thread_Turkmenportal = None
+        self.thread_Jayym = None
+        self.thread_Naydizdes = None
+        self.thread_check = None
         self.stop_threads = Event()
 
-    def start(self):
+    def check_threads(self):
+        while True:
+            if not self.thread_Tmcars.is_alive() and not self.thread_Turkmenportal.is_alive():
+                self.thread_Jayym.start()
+                self.thread_Naydizdes.start()
+                self.thread_check = None
+                return 1
+            sleep(5)
+
+    def start(self, count_pages):
+        try:
+            count_pages = int(count_pages)
+        except ValueError:
+            print("Некорректное значение!")
+            return 0
+
         self.stop_threads.clear()
-        self.thread1 = Thread(target = lambda: Tmcars(Find, Save).parse_links())
-        self.thread1.start()
+
+        self.thread_Tmcars = Thread(target = lambda: Tmcars(Find, Save).parse_links(count_pages))
+        self.thread_Turkmenportal = Thread(target = lambda: Turkmenportal(Find, Save).parse_links(count_pages))
+        self.thread_Jayym = Thread(target = lambda: Jayym(Find, Save).parse_links(count_pages))
+        self.thread_Naydizdes = Thread(target = lambda: Naydizdes(Find, Save).parse_links(count_pages))
+
+        self.thread_check = Thread(target = lambda: self.check_threads())
+
+        self.thread_Tmcars.start()
+        self.thread_Turkmenportal.start()
+        self.thread_check.start()
+
+        
+
 
     def finish(self):
         self.stop_threads.set()
-        self.thread1 = None
+        self.thread_Tmcars = None
+        self.thread_Turkmenportal = None
+        self.thread_Jayym = None
+        self.thread_Naydizdes = None
+        self.thread_check = None
 
 
 if __name__ == "__main__":
@@ -38,12 +78,12 @@ if __name__ == "__main__":
     width, height = 1360//3, 768//5
     root.geometry(f'550x475+{width}+{height}')
 
-    # label_count = Tk.Label(root, text='Количество страниц: ')
-    # label_count.place(x=10, y=3) 
+    label_count = Tk.Label(root, text='Количество страниц: ')
+    label_count.place(x=10, y=3) 
 
-    # txt_count = Tk.Entry(root, width=10)  
-    # txt_count.place(x=140, y=5) 
-    # txt_count.configure(background='#ffffff', borderwidth=2, relief="groove")
+    txt_count = Tk.Entry(root, width=10)  
+    txt_count.place(x=140, y=5) 
+    txt_count.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
     # variables = Tk.StringVar(root)
@@ -68,7 +108,7 @@ if __name__ == "__main__":
     # args_entry.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
-    button_start = Tk.Button(root, text='Начать', width=15, command=control.start())
+    button_start = Tk.Button(root, text='Начать', width=15, command = lambda: control.start(txt_count.get()))
     button_start.place(x=10, y=70) 
 
     # button_continue = Tk.Button(root, text='Продолжить', width=15)
