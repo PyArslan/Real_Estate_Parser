@@ -1,5 +1,4 @@
-from Modules.Find import Find
-from Modules.Save import Save
+
 
 
 class Turkmenportal:
@@ -7,7 +6,11 @@ class Turkmenportal:
     def __init__(self, Find, Save):
         self.Find = Find()
         self.Save = Save
-        self.Find.get("https://turkmenportal.com/estates/nedvizhimost")
+        try:
+            self.Find.get("https://turkmenportal.com/estates/nedvizhimost")
+        except self.Find.WE:
+            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            return 0
 
     def parse_links(self, count_pages=0):
         link_list = []
@@ -93,6 +96,9 @@ class Turkmenportal:
 
 
 if __name__ == "__main__":
+    from Modules.Find import Find
+    from Modules.Save import Save
+    
     Turkmenportal = Turkmenportal(Find, Save)
     Turkmenportal.parse_links(0)
 

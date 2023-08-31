@@ -1,6 +1,3 @@
-from Modules.Find import Find
-from Modules.Save import Save
-
 import time
 import datetime
 
@@ -11,7 +8,11 @@ class Tmcars:
     def __init__(self, Find, Save):
         self.Find = Find()
         self.Save = Save
-        self.Find.get("https://tmcars.info/others/nedvijimost")
+        try:
+            self.Find.get("https://tmcars.info/others/nedvijimost")
+        except self.Find.WE:
+            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            return 0
         
     @staticmethod
     def date_check(date_to_check):
@@ -36,7 +37,7 @@ class Tmcars:
 
         return formatted_date
 
-    def parse_links(self, count_pages):
+    def parse_links(self, count_pages=0):
         link_list = []
 
         if count_pages == 0:
@@ -162,6 +163,9 @@ class Tmcars:
         self.Save.links(link_list)
 
 if __name__ == "__main__":
+    from Modules.Find import Find
+    from Modules.Save import Save
+
     Tmcars = Tmcars(Find, Save)
     Tmcars.parse_links(0)
     # Tmcars.parse_cards()

@@ -1,5 +1,3 @@
-from Modules.Find import Find
-from Modules.Save import Save
 
 import datetime
 
@@ -8,7 +6,11 @@ class Naydizdes:
     def __init__(self, Find, Save):
         self.Find = Find()
         self.Save = Save
-        self.Find.get("https://www.naydizdes.com/nedvijimost/")
+        try:
+            self.Find.get("https://www.naydizdes.com/nedvijimost/")
+        except self.Find.WE:
+            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            return 0
 
     @staticmethod
     def changekey(array, keys):
@@ -132,6 +134,9 @@ class Naydizdes:
 
 
 if __name__ == "__main__":
+    from Modules.Find import Find
+    from Modules.Save import Save
+
     Naydizdes = Naydizdes(Find, Save)
     Naydizdes.parse_links(0)
     # Naydizdes.parse_cards()

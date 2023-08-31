@@ -1,5 +1,3 @@
-from Modules.Find import Find
-from Modules.Save import Save
 
 
 class Jayym:
@@ -7,8 +5,11 @@ class Jayym:
     def __init__(self, Find, Save):
         self.Find = Find()
         self.Save = Save
-        self.Find.get("https://jayym.com/properties.html")
-        
+        try:
+            self.Find.get("https://jayym.com/properties.html")
+        except self.Find.WE:
+            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            return 0
 
     @staticmethod
     def changekey(array, keys):
@@ -102,4 +103,7 @@ class Jayym:
 
 
 if __name__ == "__main__":
+    from Modules.Find import Find
+    from Modules.Save import Save
+
     Jayym(Find, Save).parse_links(0)
