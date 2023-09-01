@@ -1,15 +1,13 @@
 import time
 import datetime
 
-
-
 class Tmcars:
     
-    def __init__(self, Find, Save, output=print):
+    def __init__(self, Find, Save, stop_thread_check, output=print):
         self.Find = Find()
         self.Save = Save
         self.output = output
-        self.stop_thread = False
+        self.stop_thread_check = stop_thread_check
 
         self.output("[Tmcars] Начинаю парсинг...")
 
@@ -43,6 +41,7 @@ class Tmcars:
         return formatted_date
 
     def parse_links(self, count_pages=0):
+
         link_list = []
 
         if count_pages == 0:
@@ -51,6 +50,14 @@ class Tmcars:
         self.output(f"[Tmcars] Количество страниц: {count_pages}")
         
         for page in range(count_pages):
+
+            if self.stop_thread_check() == True:
+                self.Save.links(link_list, "Tmcars")
+                self.output("[Tmcars] Парсинг ссылок успешно остановился!")
+                return 1
+
+
+            self.output(f"[Tmcars] Страница: {page+1}")
             self.Find.get(f"https://tmcars.info/others/nedvijimost?offset={page*100}&max=100&lang=ru")
             card_list = self.Find.xs("//div[@class='item7-card-img']/a")
 

@@ -2,10 +2,11 @@
 
 class Jayym:
 
-    def __init__(self, Find, Save, output=print):
+    def __init__(self, Find, Save, stop_thread_check, output=print):
         self.Find = Find()
         self.Save = Save
         self.output = output
+        self.stop_thread_check = stop_thread_check
 
         self.output("[Jayym] Начинаю парсинг...")
 
@@ -40,6 +41,12 @@ class Jayym:
 
 
         for page in range(1, count_pages+1):
+            if self.stop_thread_check() == True:
+                self.Save.links(link_list, "Jayym")
+                self.output("[Jayym] Парсинг ссылок успешно остановился!")
+                return 1
+            
+            self.output(f"[Jayym] Страница: {page}")
             self.Find.get(f"https://jayym.com/properties/index{page}.html")
             card_list = self.Find.xs("//section[@id='listings']/article/div[2]/a")
 

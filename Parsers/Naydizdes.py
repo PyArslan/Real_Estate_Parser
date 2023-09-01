@@ -3,10 +3,11 @@ import datetime
 
 class Naydizdes:
 
-    def __init__(self, Find, Save, output=print):
+    def __init__(self, Find, Save, stop_thread_check, output=print):
         self.Find = Find()
         self.Save = Save
         self.output = output
+        self.stop_thread_check = stop_thread_check
 
         self.output("[Naydizdes] Начинаю парсинг...")
 
@@ -72,6 +73,12 @@ class Naydizdes:
         self.output(f"[Naydizdes] Количество страниц: {count_pages}")    
 
         for page in range(1, count_pages+1):
+            if self.stop_thread_check() == True:
+                self.Save.links(link_list, "Naydizdes")
+                self.output("[Naydizdes] Парсинг ссылок успешно остановился!")
+                return 1
+            
+            self.output(f"[Naydizdes] Страница: {page}")
             self.Find.get(f"https://www.naydizdes.com/nedvijimost/{page}/")
             card_list = self.Find.xs("//a[@class='item_link clearfix']")
 

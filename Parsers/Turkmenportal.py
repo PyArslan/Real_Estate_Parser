@@ -3,10 +3,11 @@
 
 class Turkmenportal:
 
-    def __init__(self, Find, Save, output=print):
+    def __init__(self, Find, Save, stop_thread_check, output=print):
         self.Find = Find()
         self.Save = Save
         self.output = output
+        self.stop_thread_check = stop_thread_check
 
         self.output("[Turkmenportal] Начинаю парсинг...")
 
@@ -32,6 +33,12 @@ class Turkmenportal:
             
 
         for page in range(1, count_pages+1):
+            if self.stop_thread_check() == True:
+                self.Save.links(link_list, "Turkmenportal")
+                self.output("[Turkmenportal] Парсинг ссылок успешно остановился!")
+                return 1
+            
+            self.output(f"[Turkmenportal] Страница: {page}")
             self.Find.get(f"https://turkmenportal.com/estates/a/index?Estates_sort=date_added.desc&page={page}&path=nedvizhimost")
             card_list = self.Find.xs("//div[@class='entry-title']/a")
 

@@ -13,19 +13,31 @@ import os
 from time import sleep
 from threading import Thread,Event
 
+
 class Controller(object):
     
     def __init__(self):
+        self.stop_threads = False
+
         self.thread_Tmcars = None
         self.thread_Turkmenportal = None
         self.thread_Jayym = None
         self.thread_Naydizdes = None
         self.thread_check = None
-        self.stop_threads = Event()
+
+
+
+    def stop_thread_check(self):
+        # self.output(f"Thread_stop = {self.stop_threads}")
+        if self.stop_threads == True:
+            return True
+        else:
+            return False
+
 
     def check_threads(self):
         while True:
-            if not self.thread_Tmcars.is_alive() and not self.thread_Turkmenportal.is_alive():
+            if (not self.thread_Tmcars.is_alive() and not self.thread_Turkmenportal.is_alive()) or self.thread_Tmcars != None:
                 self.thread_Jayym.start()
                 self.thread_Naydizdes.start()
                 self.thread_check = None
@@ -39,28 +51,24 @@ class Controller(object):
             print("Некорректное значение!")
             return 0
 
-        self.stop_threads.clear()
+        self.stop_threads = False
 
-        self.thread_Tmcars = Thread(target = lambda: Tmcars(Find, Save, self.output).parse_links(count_pages))
-        self.thread_Turkmenportal = Thread(target = lambda: Turkmenportal(Find, Save, self.output).parse_links(count_pages))
-        self.thread_Jayym = Thread(target = lambda: Jayym(Find, Save, self.output).parse_links(count_pages))
-        self.thread_Naydizdes = Thread(target = lambda: Naydizdes(Find, Save, self.output).parse_links(count_pages))
+        self.thread_Tmcars = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        self.thread_Turkmenportal = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        self.thread_Jayym = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        self.thread_Naydizdes = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
 
         self.thread_check = Thread(target = lambda: self.check_threads())
 
         self.thread_Tmcars.start()
-        # self.thread_Turkmenportal.start()
-        # self.thread_check.start()
+        self.thread_Turkmenportal.start()
+        self.thread_check.start()
 
 
-# if self.stop_threads.is_set():
-#     break
 
+    def finish(self): 
+        self.stop_threads = True
 
-    def finish(self):
-        print(self.thread_Tmcars.Tmcars.stop_thread)
-        
-        self.stop_threads.set()
         self.thread_Tmcars = None
         self.thread_Turkmenportal = None
         self.thread_Jayym = None
