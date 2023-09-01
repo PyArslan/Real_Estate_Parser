@@ -2,13 +2,17 @@
 
 class Jayym:
 
-    def __init__(self, Find, Save):
+    def __init__(self, Find, Save, output=print):
         self.Find = Find()
         self.Save = Save
+        self.output = output
+
+        self.output("[Jayym] Начинаю парсинг...")
+
         try:
             self.Find.get("https://jayym.com/properties.html")
         except self.Find.WE:
-            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            self.output("[Jayym->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
 
     @staticmethod
@@ -31,7 +35,8 @@ class Jayym:
         if count_pages == 0:
             count_pages = self.Find.x("//li[@class='transit']").text
             count_pages = int(count_pages[count_pages.rfind(" "):])
-            print(count_pages)
+        
+        self.output(f"[Jayym] Количество страниц: {count_pages}")
 
 
         for page in range(1, count_pages+1):
@@ -42,6 +47,7 @@ class Jayym:
                 link_list.append(i.get_attribute('href'))
 
         self.Save.links(link_list, "Jayym")
+        self.output("[Jayym] Парсинг ссылок успешно завершился!")
 
     def parse_cards(self):
         with open(f"Parse_Files\\Links_Jayym.txt", "r", encoding="utf8") as file:
@@ -57,12 +63,12 @@ class Jayym:
 
 
             link = link_list.pop(0)
-            print(f"{count+1}. {link}")
+            self.output(f"{count+1}. {link}")
 
             try:
                 self.Find.get(link)
             except self.Find.WE:
-                print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+                self.output("[Jayym->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
 
             keys = [i.text for i in self.Find.xs("//div[@class='listing-fields']//span") if i.text != ""]
             values = [i.text for i in self.Find.xs("//div[@class='listing-fields']//div[@class='value']")]

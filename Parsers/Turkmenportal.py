@@ -3,13 +3,17 @@
 
 class Turkmenportal:
 
-    def __init__(self, Find, Save):
+    def __init__(self, Find, Save, output=print):
         self.Find = Find()
         self.Save = Save
+        self.output = output
+
+        self.output("[Turkmenportal] Начинаю парсинг...")
+
         try:
             self.Find.get("https://turkmenportal.com/estates/nedvizhimost")
         except self.Find.WE:
-            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            self.output("[Turkmenportal->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
 
     def parse_links(self, count_pages=0):
@@ -23,7 +27,8 @@ class Turkmenportal:
 
             pages = [int(i) for i in pages if i]
             count_pages = round(sum(pages)/20)
-            print(count_pages)
+
+        self.output(f"[Turkmenportal] Количество страниц: {count_pages}")
             
 
         for page in range(1, count_pages+1):
@@ -34,6 +39,7 @@ class Turkmenportal:
                 link_list.append(card.get_attribute('href'))
 
         self.Save.links(link_list, "Turkmenportal")
+        self.output("[Turkmenportal] Парсинг ссылок успешно завершился!")
 
     def parse_cards(self):
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
@@ -49,12 +55,12 @@ class Turkmenportal:
 
 
             link = link_list.pop(0)
-            print(f"{count+1}. {link}")
+            self.output(f"{count+1}. {link}")
 
             try:
                 self.Find.get(link)
             except self.Find.WE:
-                print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+                self.output("[Turkmenportal->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
                 pass
 
             card = [["Web ссылка", link]]
@@ -87,7 +93,7 @@ class Turkmenportal:
                     card.append(["Конт.номер", i])
 
 
-            print("\n\n-----------\n",card,end="\n-----------\n\n")
+            # print("\n\n-----------\n",card,end="\n-----------\n\n")
             estate_list.append({key.strip(): value.strip() for key,value in card})
 
 

@@ -3,13 +3,17 @@ import datetime
 
 class Naydizdes:
 
-    def __init__(self, Find, Save):
+    def __init__(self, Find, Save, output=print):
         self.Find = Find()
         self.Save = Save
+        self.output = output
+
+        self.output("[Naydizdes] Начинаю парсинг...")
+
         try:
             self.Find.get("https://www.naydizdes.com/nedvijimost/")
         except self.Find.WE:
-            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            self.output("[Naydizdes->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
 
     @staticmethod
@@ -64,7 +68,8 @@ class Naydizdes:
 
         if count_pages == 0:
             count_pages = int(self.Find.x("//div[@class='paginator']").text.split(" ")[-2])
-            print(count_pages)
+
+        self.output(f"[Naydizdes] Количество страниц: {count_pages}")    
 
         for page in range(1, count_pages+1):
             self.Find.get(f"https://www.naydizdes.com/nedvijimost/{page}/")
@@ -74,7 +79,7 @@ class Naydizdes:
                 link_list.append(i.get_attribute('href'))
 
         self.Save.links(link_list, "Naydizdes")
-
+        self.output("[Naydizdes] Парсинг ссылок успешно завершился!")
 
     def parse_cards(self):
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
@@ -90,12 +95,12 @@ class Naydizdes:
 
 
             link = link_list.pop(0)
-            print(f"{count+1}. {link}")
+            self.output(f"{count+1}. {link}")
 
             try:
                 self.Find.get(link)
             except self.Find.WE:
-                print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+                self.output("[Naydizdes->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
                 
 
             info_labels = [i.text[:i.text.find(":")] for i in self.Find.xs("//div[@class='post_custom_fields clearfix mxn1']/div/div/span[contains(@class, 'cf_label')]")]
@@ -125,7 +130,7 @@ class Naydizdes:
             except KeyError:
                 pass
 
-            print(info,'\n\n')
+            # print(info,'\n\n')
             estate_list.append(info)
 
         self.Save.to_xlsx(estate_list, "Naydizdes", count)

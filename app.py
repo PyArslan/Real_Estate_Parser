@@ -41,21 +41,25 @@ class Controller(object):
 
         self.stop_threads.clear()
 
-        self.thread_Tmcars = Thread(target = lambda: Tmcars(Find, Save).parse_links(count_pages))
-        self.thread_Turkmenportal = Thread(target = lambda: Turkmenportal(Find, Save).parse_links(count_pages))
-        self.thread_Jayym = Thread(target = lambda: Jayym(Find, Save).parse_links(count_pages))
-        self.thread_Naydizdes = Thread(target = lambda: Naydizdes(Find, Save).parse_links(count_pages))
+        self.thread_Tmcars = Thread(target = lambda: Tmcars(Find, Save, self.output).parse_links(count_pages))
+        self.thread_Turkmenportal = Thread(target = lambda: Turkmenportal(Find, Save, self.output).parse_links(count_pages))
+        self.thread_Jayym = Thread(target = lambda: Jayym(Find, Save, self.output).parse_links(count_pages))
+        self.thread_Naydizdes = Thread(target = lambda: Naydizdes(Find, Save, self.output).parse_links(count_pages))
 
         self.thread_check = Thread(target = lambda: self.check_threads())
 
         self.thread_Tmcars.start()
-        self.thread_Turkmenportal.start()
-        self.thread_check.start()
+        # self.thread_Turkmenportal.start()
+        # self.thread_check.start()
 
-        
+
+# if self.stop_threads.is_set():
+#     break
 
 
     def finish(self):
+        print(self.thread_Tmcars.Tmcars.stop_thread)
+        
         self.stop_threads.set()
         self.thread_Tmcars = None
         self.thread_Turkmenportal = None
@@ -63,6 +67,10 @@ class Controller(object):
         self.thread_Naydizdes = None
         self.thread_check = None
 
+
+    def output(self, text):
+        console_output.insert(Tk.END, f"{text}\n")
+        console_output.see("end")
 
 if __name__ == "__main__":
 
@@ -114,8 +122,8 @@ if __name__ == "__main__":
     # button_continue = Tk.Button(root, text='Продолжить', width=15)
     # button_continue.place(x=220, y=70) 
 
-    # button_finish = Tk.Button(root, text='Приостановить', width=15)
-    # button_finish.place(x=420, y=70)
+    button_finish = Tk.Button(root, text='Приостановить', width=15, command=control.finish)
+    button_finish.place(x=420, y=70)
 
 
     # take_screenshots = Tk.IntVar(value=1)

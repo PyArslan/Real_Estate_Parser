@@ -5,13 +5,18 @@ import datetime
 
 class Tmcars:
     
-    def __init__(self, Find, Save):
+    def __init__(self, Find, Save, output=print):
         self.Find = Find()
         self.Save = Save
+        self.output = output
+        self.stop_thread = False
+
+        self.output("[Tmcars] Начинаю парсинг...")
+
         try:
             self.Find.get("https://tmcars.info/others/nedvijimost")
         except self.Find.WE:
-            print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            self.output("[Tmcars->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
         
     @staticmethod
@@ -42,8 +47,8 @@ class Tmcars:
 
         if count_pages == 0:
             count_pages = round(int(self.Find.x("//div[@class='sorting-results']/h6/span").text.strip())/100)
-            print(count_pages)
 
+        self.output(f"[Tmcars] Количество страниц: {count_pages}")
         
         for page in range(count_pages):
             self.Find.get(f"https://tmcars.info/others/nedvijimost?offset={page*100}&max=100&lang=ru")
@@ -53,7 +58,7 @@ class Tmcars:
                 link_list.append(card.get_attribute('href'))
 
         self.Save.links(link_list, "Tmcars")
-
+        self.output("[Tmcars] Парсинг ссылок успешно завершился!")
 
     def parse_cards(self):
         with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
@@ -69,12 +74,12 @@ class Tmcars:
 
 
             link = link_list.pop(0)
-            print(f"{count+1}. {link}")
+            self.output(f"{count+1}. {link}")
 
             try:
                 self.Find.get(link)
             except self.Find.WE:
-                print("[Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+                self.output("[Tmcars->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
                 pass
 
             if count < 2:
@@ -155,7 +160,7 @@ class Tmcars:
                 else:
                     card.append(info.text.split(":"))
 
-            print("\n\n-----------\n",card,end="\n-----------\n\n")
+            # print("\n\n-----------\n",card,end="\n-----------\n\n")
             estate_list.append({key.strip(): value.strip() for key,value in card})
 
 
