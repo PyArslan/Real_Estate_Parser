@@ -92,7 +92,7 @@ if __name__ == "__main__":
     root.configure(background='#ececec')
 
     width, height = 1360//3, 768//5
-    root.geometry(f'550x475+{width}+{height}')
+    root.geometry(f'550x510+{width}+{height}')
 
     label_count = Tk.Label(root, text='Количество страниц: ')
     label_count.place(x=10, y=3) 
@@ -102,55 +102,68 @@ if __name__ == "__main__":
     txt_count.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
-    # variables = Tk.StringVar(root)
-    # variables.set("https://tmcars.info/others/nedvijimost") # default value
+    variables = Tk.StringVar(root)
+    variables.set("https://tmcars.info/others/nedvijimost") # default value
 
-    # txt_link = Tk.OptionMenu(root, variables, 
-    #                         "https://tmcars.info/others/nedvijimost", 
-    #                         "https://tmcars.info/others/nedvijimost/prodaja-kvartir-i-domov",
-    #                         "https://tmcars.info/others/nedvijimost/arenda-komnaty-kvartiry-i-doma",
-    #                         "https://tmcars.info/others/nedvijimost/arenda-ofisa",
-    #                         "https://tmcars.info/others/nedvijimost/spros-na-arendu-komnaty-kvartiry.."
-    #                          )
+    txt_link = Tk.OptionMenu(root, variables, 
+                            "https://tmcars.info/others/nedvijimost", 
+                            "https://tmcars.info/others/nedvijimost/prodaja-kvartir-i-domov",
+                            "https://tmcars.info/others/nedvijimost/arenda-komnaty-kvartiry-i-doma",
+                            "https://tmcars.info/others/nedvijimost/arenda-ofisa",
+                            "https://tmcars.info/others/nedvijimost/spros-na-arendu-komnaty-kvartiry.."
+                             )
     
-    # txt_link.place(x=320, y=5) 
-    # txt_link.configure(background='#ffffff', borderwidth=2, relief="groove", width=30)
+    txt_link.place(x=320, y=5) 
+    txt_link.configure(background='#ffffff', borderwidth=2, relief="groove", width=30)
 
-    # label_args_entry = Tk.Label(root, text='Своя ссылка: ')
-    # label_args_entry.place(x=240, y=40) 
+    label_args_entry = Tk.Label(root, text='Своя ссылка: ')
+    label_args_entry.place(x=240, y=40) 
 
-    # args_entry = Tk.Entry(root, width=36) 
-    # args_entry.place(x=320, y=40)  
-    # args_entry.configure(background='#ffffff', borderwidth=2, relief="groove")
+    args_entry = Tk.Entry(root, width=36) 
+    args_entry.place(x=320, y=40)  
+    args_entry.configure(background='#ffffff', borderwidth=2, relief="groove")
+
+
+    button_Tmcars = Tk.Button(root, text='Tmcars', width=15)
+    button_Tmcars.place(x=10, y=70) 
+
+    button_Naydizdes = Tk.Button(root, text='Naydizdes', width=15)
+    button_Naydizdes.place(x=150, y=70) 
+
+    button_Jayym = Tk.Button(root, text='Jayym', width=15)
+    button_Jayym.place(x=285, y=70) 
+
+    button_Turkmenportal = Tk.Button(root, text='Turkmenportal', width=15)
+    button_Turkmenportal.place(x=420, y=70) 
 
 
     button_start = Tk.Button(root, text='Начать', width=15, command = lambda: control.start(txt_count.get()))
-    button_start.place(x=10, y=70) 
+    button_start.place(x=10, y=110) 
 
-    # button_continue = Tk.Button(root, text='Продолжить', width=15)
-    # button_continue.place(x=220, y=70) 
+    button_continue = Tk.Button(root, text='Продолжить', width=15)
+    button_continue.place(x=220, y=110) 
 
     button_finish = Tk.Button(root, text='Приостановить', width=15, command=control.finish)
-    button_finish.place(x=420, y=70)
+    button_finish.place(x=420, y=110)
 
 
-    # take_screenshots = Tk.IntVar(value=1)
+    take_screenshots = Tk.IntVar(value=1)
 
-    # CheckScreenshots = Tk.Checkbutton(root, text='Скриншоты',variable=take_screenshots, onvalue=1, offvalue=0)
-    # CheckScreenshots.place(x=10, y=110)
+    CheckScreenshots = Tk.Checkbutton(root, text='Скриншоты',variable=take_screenshots, onvalue=1, offvalue=0)
+    CheckScreenshots.place(x=10, y=148)
 
 
-    # label_file_path = Tk.Label(root, text='Путь к скриншотам: ')
-    # label_file_path.place(x=175, y=110) 
+    label_file_path = Tk.Label(root, text='Путь к скриншотам: ')
+    label_file_path.place(x=175, y=148) 
 
-    # txt_file_path = Tk.Entry(root, width=36)  
-    # txt_file_path.insert(Tk.END, "D:\\Screenshotsteh\\")
-    # txt_file_path.place(x=300, y=110) 
-    # txt_file_path.configure(background='#ffffff', borderwidth=2, relief="groove")
+    txt_file_path = Tk.Entry(root, width=36)  
+    txt_file_path.insert(Tk.END, "D:\\Screenshotsteh\\")
+    txt_file_path.place(x=300, y=148) 
+    txt_file_path.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
     console_output = ScrolledText(root, width=64, height=20, font="Fixedsys 12", wrap="word", bg="black", fg="white", bd=4)
-    console_output.place(x=7, y=140)
+    console_output.place(x=7, y=175)
 
     console_output.insert(Tk.END, f"Добро Пожаловать!\n\n{'Информация':-^63}\n")
     console_output.insert(Tk.END, f"1. Введите количество страниц и запустите процесс\n")
