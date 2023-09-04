@@ -25,45 +25,72 @@ class Controller(object):
         self.thread_Naydizdes = None
         self.thread_check = None
 
+        self.selected_site = False
 
+    def select_site(self, site):
+        self.selected_site = site
+        self.output(f"[Приложение] Выбранный сайт: {self.selected_site}")
 
     def stop_thread_check(self):
-        # self.output(f"Thread_stop = {self.stop_threads}")
+        """ Эту функцию отправляем в файлы парсеры для 
+            проверки переменной из этого файла """
         if self.stop_threads == True:
             return True
         else:
             return False
 
 
-    def check_threads(self):
-        while True:
-            if (not self.thread_Tmcars.is_alive() and not self.thread_Turkmenportal.is_alive()) or self.thread_Tmcars != None:
-                self.thread_Jayym.start()
-                self.thread_Naydizdes.start()
-                self.thread_check = None
-                return 1
-            sleep(5)
+    # def check_threads(self):
+    #     while True:
+    #         if (not self.thread_Tmcars.is_alive() and not self.thread_Turkmenportal.is_alive()) or self.thread_Tmcars != None:
+    #             self.thread_Jayym.start()
+    #             self.thread_Naydizdes.start()
+    #             self.thread_check = None
+    #             return 1
+    #         sleep(5)
 
     def start(self, count_pages):
         try:
             count_pages = int(count_pages)
         except ValueError:
-            print("Некорректное значение!")
+            self.output("[Ошибка] Некорректное значение страниц!")
             return 0
 
         self.stop_threads = False
 
-        self.thread_Tmcars = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
-        self.thread_Turkmenportal = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
-        self.thread_Jayym = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
-        self.thread_Naydizdes = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        if not self.selected_site:
+            self.output("[Ошибка] Выберите сайт!")
+            return 0
+        
+        if self.selected_site == "Tmcars":
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        elif self.selected_site == "Turkmenportal":
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        elif self.selected_site == "Jayym":
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        elif self.selected_site == "Naydizdes":
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
 
-        self.thread_check = Thread(target = lambda: self.check_threads())
+        self.thread.start()
 
-        self.thread_Tmcars.start()
-        self.thread_Turkmenportal.start()
-        self.thread_check.start()
 
+    def continue_parsing(self):
+        self.stop_threads = False
+
+        if not self.selected_site:
+            self.output("[Ошибка] Выберите сайт!")
+            return 0
+        
+        if self.selected_site == "Tmcars":
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        elif self.selected_site == "Turkmenportal":
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        elif self.selected_site == "Jayym":
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+        elif self.selected_site == "Naydizdes":
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+
+        self.thread.start()
 
 
     def finish(self): 
@@ -75,6 +102,7 @@ class Controller(object):
         self.thread_Naydizdes = None
         self.thread_check = None
 
+        self.selected_site = False
 
     def output(self, text):
         console_output.insert(Tk.END, f"{text}\n")
@@ -89,9 +117,10 @@ if __name__ == "__main__":
 
     root = Tk.Tk()
     root.title('Real Estate Parser')
+    root.wm_iconbitmap('house.ico')
     root.configure(background='#ececec')
 
-    width, height = 1360//3, 768//5
+    width, height = 1360//3, 768//7
     root.geometry(f'550x510+{width}+{height}')
 
     label_count = Tk.Label(root, text='Количество страниц: ')
@@ -124,16 +153,16 @@ if __name__ == "__main__":
     args_entry.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
-    button_Tmcars = Tk.Button(root, text='Tmcars', width=15)
+    button_Tmcars = Tk.Button(root, text='Tmcars', width=15, command=lambda: control.select_site("Tmcars"))
     button_Tmcars.place(x=10, y=70) 
 
-    button_Naydizdes = Tk.Button(root, text='Naydizdes', width=15)
+    button_Naydizdes = Tk.Button(root, text='Naydizdes', width=15, command=lambda: control.select_site("Naydizdes"))
     button_Naydizdes.place(x=150, y=70) 
 
-    button_Jayym = Tk.Button(root, text='Jayym', width=15)
+    button_Jayym = Tk.Button(root, text='Jayym', width=15, command=lambda: control.select_site("Jayym"))
     button_Jayym.place(x=285, y=70) 
 
-    button_Turkmenportal = Tk.Button(root, text='Turkmenportal', width=15)
+    button_Turkmenportal = Tk.Button(root, text='Turkmenportal', width=15, command=lambda: control.select_site("Turkmenportal"))
     button_Turkmenportal.place(x=420, y=70) 
 
 
