@@ -11,7 +11,7 @@ from Parsers.Modules.Save import Save
 
 import os
 from time import sleep
-from threading import Thread,Event
+from threading import Thread
 
 
 class Controller(object):
@@ -31,6 +31,71 @@ class Controller(object):
         self.selected_site = site
         self.output(f"[Приложение] Выбранный сайт: {self.selected_site}")
 
+        if site == "Tmcars":
+            txt_link['menu'].delete(0, 'end')
+            links_array = [
+                           "https://tmcars.info/others/nedvijimost", 
+                            "https://tmcars.info/others/nedvijimost/prodaja-kvartir-i-domov",
+                            "https://tmcars.info/others/nedvijimost/arenda-komnaty-kvartiry-i-doma",
+                            "https://tmcars.info/others/nedvijimost/arenda-ofisa",
+                            "https://tmcars.info/others/nedvijimost/spros-na-arendu-komnaty-kvartiry.."
+                            ]
+            
+            for i in links_array:
+                txt_link["menu"].add_command(label=i, command=Tk._setit(link_variables, i))
+            link_variables.set("https://tmcars.info/others/nedvijimost")
+                            
+                                    
+        elif site == "Jayym":
+            txt_link['menu'].delete(0, 'end')
+            links_array = [
+                            'https://jayym.com/properties.html',
+                            'https://jayym.com/properties/sell/',
+                            'https://jayym.com/properties/rent/',
+                            'https://jayym.com/properties/sell/house/',
+                            'https://jayym.com/properties/sell/dupleks/',
+                            'https://jayym.com/properties/sell/apartment/',
+                            'https://jayym.com/properties/sell/commercial-property/',
+                            'https://jayym.com/properties/sell/land/',
+                            'https://jayym.com/properties/sell/elite-housing/'
+                            ]
+            
+            for i in links_array:
+                txt_link["menu"].add_command(label=i, command=Tk._setit(link_variables, i))
+            link_variables.set("https://jayym.com/properties.html")
+
+        elif site == "Naydizdes":
+            txt_link['menu'].delete(0, 'end')
+            links_array = [
+                            "https://www.naydizdes.com/nedvijimost/",
+                            'https://www.naydizdes.com/prodaja-kvartir/',
+                            'https://www.naydizdes.com/arenda-kvartir/',
+                            'https://www.naydizdes.com/prodaja-ofisov-magazinov/',
+                            'https://www.naydizdes.com/arenda-ofisov-magazinov/',
+                            'https://www.naydizdes.com/arenda-komnati/',
+                            'https://www.naydizdes.com/prodaja-zemli/',
+                            'https://www.naydizdes.com/ashgabat/nedvijimost/',
+                            'https://www.naydizdes.com/ashgabat/nedvijimost/',
+                            'https://www.naydizdes.com/dasoguz-welayaty/nedvijimost/',
+                            'https://www.naydizdes.com/ahal/nedvijimost/',
+                            'https://www.naydizdes.com/lebap/nedvijimost/',
+                            'https://www.naydizdes.com/balkan/nedvijimost/',
+                            'https://www.naydizdes.com/mary-welayaty/nedvijimost/'
+                            ]
+            
+            for i in links_array:
+                txt_link["menu"].add_command(label=i, command=Tk._setit(link_variables, i))
+            link_variables.set("https://www.naydizdes.com/nedvijimost/")
+        else:
+            txt_link['menu'].delete(0, 'end')
+            links_array = [
+                           "https://turkmenportal.com/estates",
+                            ]
+            
+            for i in links_array:
+                txt_link["menu"].add_command(label=i, command=Tk._setit(link_variables, i))
+            link_variables.set("https://turkmenportal.com/estates")
+
     def stop_thread_check(self):
         """ Эту функцию отправляем в файлы парсеры для 
             проверки переменной из этого файла """
@@ -40,22 +105,17 @@ class Controller(object):
             return False
 
 
-    # def check_threads(self):
-    #     while True:
-    #         if (not self.thread_Tmcars.is_alive() and not self.thread_Turkmenportal.is_alive()) or self.thread_Tmcars != None:
-    #             self.thread_Jayym.start()
-    #             self.thread_Naydizdes.start()
-    #             self.thread_check = None
-    #             return 1
-    #         sleep(5)
-
-    def start(self, count_pages):
+    def start(self, count_pages, link, own_link):
         try:
             count_pages = int(count_pages)
         except ValueError:
             self.output("[Ошибка] Некорректное значение страниц!")
             return 0
 
+        if own_link:
+            link = own_link
+
+
         self.stop_threads = False
 
         if not self.selected_site:
@@ -63,32 +123,39 @@ class Controller(object):
             return 0
         
         if self.selected_site == "Tmcars":
-            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
         elif self.selected_site == "Turkmenportal":
-            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
         elif self.selected_site == "Jayym":
-            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
         elif self.selected_site == "Naydizdes":
-            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
 
         self.thread.start()
 
 
-    def continue_parsing(self):
+    def continue_parsing(self, path, take_screenshots):
         self.stop_threads = False
 
         if not self.selected_site:
             self.output("[Ошибка] Выберите сайт!")
             return 0
         
+        if not path:
+            self.output("[Ошибка] Укажить путь до скриншотов!")
+            return 0
+        
+        if path[-1] != "\\":
+            path = path + "\\"
+
         if self.selected_site == "Tmcars":
-            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
         elif self.selected_site == "Turkmenportal":
-            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
         elif self.selected_site == "Jayym":
-            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
         elif self.selected_site == "Naydizdes":
-            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(count_pages))
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
 
         self.thread.start()
 
@@ -131,26 +198,21 @@ if __name__ == "__main__":
     txt_count.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
-    variables = Tk.StringVar(root)
-    variables.set("https://tmcars.info/others/nedvijimost") # default value
+    link_variables = Tk.StringVar(root)
+    link_variables.set("") # default value
 
-    txt_link = Tk.OptionMenu(root, variables, 
-                            "https://tmcars.info/others/nedvijimost", 
-                            "https://tmcars.info/others/nedvijimost/prodaja-kvartir-i-domov",
-                            "https://tmcars.info/others/nedvijimost/arenda-komnaty-kvartiry-i-doma",
-                            "https://tmcars.info/others/nedvijimost/arenda-ofisa",
-                            "https://tmcars.info/others/nedvijimost/spros-na-arendu-komnaty-kvartiry.."
-                             )
+    links_array = [""]
+    txt_link = Tk.OptionMenu(root, link_variables, *links_array)
     
     txt_link.place(x=320, y=5) 
     txt_link.configure(background='#ffffff', borderwidth=2, relief="groove", width=30)
 
-    label_args_entry = Tk.Label(root, text='Своя ссылка: ')
-    label_args_entry.place(x=240, y=40) 
+    label_own_link = Tk.Label(root, text='Своя ссылка: ')
+    label_own_link.place(x=240, y=40) 
 
-    args_entry = Tk.Entry(root, width=36) 
-    args_entry.place(x=320, y=40)  
-    args_entry.configure(background='#ffffff', borderwidth=2, relief="groove")
+    own_link = Tk.Entry(root, width=36) 
+    own_link.place(x=320, y=40)  
+    own_link.configure(background='#ffffff', borderwidth=2, relief="groove")
 
 
     button_Tmcars = Tk.Button(root, text='Tmcars', width=15, command=lambda: control.select_site("Tmcars"))
@@ -166,11 +228,11 @@ if __name__ == "__main__":
     button_Turkmenportal.place(x=420, y=70) 
 
 
-    button_start = Tk.Button(root, text='Начать', width=15, command = lambda: control.start(txt_count.get()))
+    button_start = Tk.Button(root, text='Начать парсинг ссылок', width=22, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get()))
     button_start.place(x=10, y=110) 
 
-    button_continue = Tk.Button(root, text='Продолжить', width=15)
-    button_continue.place(x=220, y=110) 
+    button_continue = Tk.Button(root, text='Продолжить парсинг объявлений', width=28, command=lambda: control.continue_parsing(txt_file_path.get(), take_screenshots.get()))
+    button_continue.place(x=195, y=110) 
 
     button_finish = Tk.Button(root, text='Приостановить', width=15, command=control.finish)
     button_finish.place(x=420, y=110)
@@ -186,7 +248,7 @@ if __name__ == "__main__":
     label_file_path.place(x=175, y=148) 
 
     txt_file_path = Tk.Entry(root, width=36)  
-    txt_file_path.insert(Tk.END, "D:\\Screenshotsteh\\")
+    txt_file_path.insert(Tk.END, "D:\\ScreenshotsEstate\\")
     txt_file_path.place(x=300, y=148) 
     txt_file_path.configure(background='#ffffff', borderwidth=2, relief="groove")
 

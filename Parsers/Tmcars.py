@@ -6,8 +6,10 @@ class Tmcars:
     def __init__(self, Find, Save, stop_thread_check, output=print):
         self.Find = Find()
         self.Save = Save
+
         self.output = output
         self.stop_thread_check = stop_thread_check
+
 
         self.output("[Tmcars] Начинаю парсинг...")
 
@@ -40,9 +42,23 @@ class Tmcars:
 
         return formatted_date
 
-    def parse_links(self, count_pages=0):
+    def parse_links(self, our_link, count_pages=0):
 
         link_list = []
+
+        if "?max=" in our_link:
+            our_link = our_link[:our_link.find("?max=")]
+            our_link += "?max=100&offset=0&lang=ru"
+                
+        elif "&max=" in our_link:
+            our_link = our_link[:our_link.find("&max=")]
+            our_link += "&max=100&offset=0&lang=ru"
+
+        else:
+            our_link += "?max=100&offset=0&lang=ru"
+
+        print(our_link)
+        self.Find.get(our_link)
 
         if count_pages == 0:
             count_pages = round(int(self.Find.x("//div[@class='sorting-results']/h6/span").text.strip())/100)
@@ -51,6 +67,10 @@ class Tmcars:
         
         for page in range(count_pages):
 
+            if page != 0:
+                our_link = our_link[:our_link.find("offset=")+7] + str(page*100) + "&lang=ru"
+                self.Find.get(our_link)
+
             if self.stop_thread_check() == True:
                 self.Save.links(link_list, "Tmcars")
                 self.output("[Tmcars] Парсинг ссылок успешно остановился!")
@@ -58,7 +78,6 @@ class Tmcars:
 
 
             self.output(f"[Tmcars] Страница: {page+1}")
-            self.Find.get(f"https://tmcars.info/others/nedvijimost?offset={page*100}&max=100&lang=ru")
             card_list = self.Find.xs("//div[@class='item7-card-img']/a")
 
             for card in card_list:
@@ -67,7 +86,7 @@ class Tmcars:
         self.Save.links(link_list, "Tmcars")
         self.output("[Tmcars] Парсинг ссылок успешно завершился!")
 
-    def parse_cards(self):
+    def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()
@@ -75,6 +94,13 @@ class Tmcars:
         estate_list = []
 
         for count in range(len(link_list)):
+            if self.stop_thread_check() == True:
+                self.Save.to_xlsx(estate_list, "Tmcars", count)
+                self.Save.links(link_list, "Tmcars")
+                self.output("[Tmcars] Парсинг объявлений успешно остановился!")
+                return 1
+            
+
             if count % 1000 == 0 and count != 0:
                 self.Save.to_xlsx(estate_list, "Tmcars", count)
                 self.Save.links(link_list, "Tmcars")
@@ -167,7 +193,12 @@ class Tmcars:
                 else:
                     card.append(info.text.split(":"))
 
-            # print("\n\n-----------\n",card,end="\n-----------\n\n")
+            filename = "Tmcars_" + link.split("/")[-2]
+            card.append(["Ссылка на скриншоты", path + filename])
+
+            if take_screenshots:
+                self.Find.sshot(filename, 200)
+
             estate_list.append({key.strip(): value.strip() for key,value in card})
 
 

@@ -17,7 +17,7 @@ class Turkmenportal:
             self.output("[Turkmenportal->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
 
-    def parse_links(self, count_pages=0):
+    def parse_links(self, own_link, count_pages=0):
         link_list = []
 
         if count_pages == 0:
@@ -43,12 +43,13 @@ class Turkmenportal:
             card_list = self.Find.xs("//div[@class='entry-title']/a")
 
             for card in card_list:
-                link_list.append(card.get_attribute('href'))
+                if "estates" in card.get_attribute('href'):
+                    link_list.append(card.get_attribute('href'))
 
         self.Save.links(link_list, "Turkmenportal")
         self.output("[Turkmenportal] Парсинг ссылок успешно завершился!")
 
-    def parse_cards(self):
+    def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()
@@ -56,6 +57,12 @@ class Turkmenportal:
         estate_list = []
 
         for count in range(len(link_list)):
+            if self.stop_thread_check() == True:
+                self.Save.to_xlsx(estate_list, "Turkmenportal", count)
+                self.Save.links(link_list, "Turkmenportal")
+                self.output("[Turkmenportal] Парсинг объявлений успешно остановился!")
+                return 1
+            
             if count % 1000 == 0 and count != 0:
                 self.Save.to_xlsx(estate_list, "Turkmenportal", count)
                 self.Save.links(link_list, "Turkmenportal")
@@ -80,8 +87,8 @@ class Turkmenportal:
             for i in title:
                 data = title[title.index(i)-1]
                 if "м²" in i:
-                    square = float(data)
-                    card.append(["Общая площадь", data])
+                    square = float(data.replace(",",""))
+                    card.append(["Общая площадь", data.replace(",","")])
                 if "ком." in i:
                     card.append(["Количество комнат", data])
                 if "ман." in i:
@@ -99,8 +106,13 @@ class Turkmenportal:
                 if "+" in i or i.isdigit() == True:
                     card.append(["Конт.номер", i])
 
+            filename = "Turkmenportal_" + link.split("/")[-1]
+            card.append(["Ссылка на скриншоты", path + filename])
 
-            # print("\n\n-----------\n",card,end="\n-----------\n\n")
+            if take_screenshots:
+                self.Find.sshot(filename, 200)
+
+
             estate_list.append({key.strip(): value.strip() for key,value in card})
 
 

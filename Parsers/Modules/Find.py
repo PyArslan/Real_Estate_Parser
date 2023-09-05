@@ -63,9 +63,9 @@ class Find:
         # self.driver.find_element(By.XPATH, xpath).is_displayed()
         return WebDriverWait(self.driver, num).until(EC.presence_of_element_located((By.XPATH, xpath)))
     
-    def sshot(self,  filename):
+    def sshot(self,  filename, scroll):
         self.driver.execute_script("document.body.style.zoom='60%'")
-        self.driver.execute_script("window.scrollTo(0, 200)")
+        self.driver.execute_script(f"window.scrollTo(0, {scroll})")
         time.sleep(2)
         
         if not os.path.exists(f"Parse_Files\\Pictures_{self.today}"):

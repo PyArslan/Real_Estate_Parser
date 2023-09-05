@@ -29,10 +29,15 @@ class Jayym:
 
         return array
 
-    def parse_links(self, count_pages=0):
-        """ TODO: Loop """
+    def parse_links(self, own_link, count_pages=0):
+
         link_list = []
 
+        if own_link[-1] != "/":
+            own_link = own_link[:own_link.find(".html")] + "/"
+
+        self.Find.get(own_link)
+ 
         if count_pages == 0:
             count_pages = self.Find.x("//li[@class='transit']").text
             count_pages = int(count_pages[count_pages.rfind(" "):])
@@ -47,7 +52,9 @@ class Jayym:
                 return 1
             
             self.output(f"[Jayym] Страница: {page}")
-            self.Find.get(f"https://jayym.com/properties/index{page}.html")
+            if page != 1:
+                self.Find.get(own_link + f"index{page}.html")
+                
             card_list = self.Find.xs("//section[@id='listings']/article/div[2]/a")
 
             for i in card_list:
@@ -56,7 +63,7 @@ class Jayym:
         self.Save.links(link_list, "Jayym")
         self.output("[Jayym] Парсинг ссылок успешно завершился!")
 
-    def parse_cards(self):
+    def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Jayym.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
             file.close()
@@ -64,6 +71,12 @@ class Jayym:
         estate_list = []
 
         for count in range(len(link_list)):
+            if self.stop_thread_check() == True:
+                self.Save.to_xlsx(estate_list, "Jayym", count)
+                self.Save.links(link_list, "Jayym")
+                self.output("[Jayym] Парсинг объявлений успешно остановился!")
+                return 1
+            
             if count % 1000 == 0 and count != 0:
                 self.Save.to_xlsx(estate_list, "Jayym", count)
                 self.Save.links(link_list, "Jayym")
@@ -83,7 +96,10 @@ class Jayym:
 
             info['Наименование'] = self.Find.x("//div[@class='row listing-header']/h1").text
 
-            phone = self.Find.x("//div[@id='df_field_phone']/div[2]/a").text
+            try:
+                phone = self.Find.x("//div[@id='df_field_phone']/div[2]/a").text
+            except self.Find.NSEE:
+                phone = ""
             info['Конт.номер'] = "+" + ''.join([i for i in phone if i.isdigit()])
             
             price = self.Find.x("//*[@id='df_field_price']/span").text
@@ -112,6 +128,12 @@ class Jayym:
             except KeyError:
                 pass
         
+            filename = "Jayym_" + link.split("-")[-1][:-5]
+            info["Ссылка на скриншоты"] = path + filename
+
+            if take_screenshots:
+                self.Find.sshot(filename, 200)
+
             estate_list.append(info)
 
 

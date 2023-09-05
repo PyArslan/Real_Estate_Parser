@@ -64,8 +64,10 @@ class Naydizdes:
         
 
 
-    def parse_links(self, count_pages=0):
+    def parse_links(self, own_link, count_pages=0):
         link_list = []
+
+        self.Find.get(own_link)
 
         if count_pages == 0:
             count_pages = int(self.Find.x("//div[@class='paginator']").text.split(" ")[-2])
@@ -79,7 +81,8 @@ class Naydizdes:
                 return 1
             
             self.output(f"[Naydizdes] Страница: {page}")
-            self.Find.get(f"https://www.naydizdes.com/nedvijimost/{page}/")
+            if page != 1:
+                self.Find.get(own_link + f"{page}/")
             card_list = self.Find.xs("//a[@class='item_link clearfix']")
 
             for i in card_list:
@@ -88,7 +91,7 @@ class Naydizdes:
         self.Save.links(link_list, "Naydizdes")
         self.output("[Naydizdes] Парсинг ссылок успешно завершился!")
 
-    def parse_cards(self):
+    def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
             file.close()
@@ -96,6 +99,12 @@ class Naydizdes:
         estate_list = []
 
         for count in range(len(link_list)):
+            if self.stop_thread_check() == True:
+                self.Save.to_xlsx(estate_list, "Naydizdes", count)
+                self.Save.links(link_list, "Naydizdes")
+                self.output("[Naydizdes] Парсинг объявлений успешно остановился!")
+                return 1
+            
             if count % 1000 == 0 and count != 0:
                 self.Save.to_xlsx(estate_list, "Naydizdes", count)
                 self.Save.links(link_list, "Naydizdes")
@@ -137,7 +146,12 @@ class Naydizdes:
             except KeyError:
                 pass
 
-            # print(info,'\n\n')
+            filename = "Naydizdes_" + link.split("-")[-1][:-5]
+            info["Ссылка на скриншоты"] = path + filename
+
+            if take_screenshots:
+                self.Find.sshot(filename, 200)
+
             estate_list.append(info)
 
         self.Save.to_xlsx(estate_list, "Naydizdes", count)
