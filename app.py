@@ -96,16 +96,24 @@ class Controller(object):
                 txt_link["menu"].add_command(label=i, command=Tk._setit(link_variables, i))
             link_variables.set("https://turkmenportal.com/estates")
 
-    def stop_thread_check(self):
+    def stop_thread_check(self, check="thread"):
         """ Эту функцию отправляем в файлы парсеры для 
             проверки переменной из этого файла """
-        if self.stop_threads == True:
-            return True
-        else:
-            return False
+        if check == "thread":
+            if self.stop_threads == True:
+                return True
+            else:
+                return False
+        elif check == "buttons": 
+            button_start["state"] = "normal"
+            button_continue["state"] = "normal"
 
+        
 
     def start(self, count_pages, link, own_link):
+        button_start["state"] = "disabled"
+        button_continue["state"] = "disabled"
+
         try:
             count_pages = int(count_pages)
         except ValueError:
@@ -135,6 +143,9 @@ class Controller(object):
 
 
     def continue_parsing(self, path, take_screenshots):
+        button_start["state"] = "disabled"
+        button_continue["state"] = "disabled"
+
         self.stop_threads = False
 
         if not self.selected_site:
@@ -160,7 +171,18 @@ class Controller(object):
         self.thread.start()
 
 
+    def check_thread_alive(self):
+        while True:
+            if self.thread.is_alive():
+                sleep(3)
+            else:
+                button_start["state"] = "normal"
+                button_continue["state"] = "normal"
+                button_finish["state"] = "normal"
+                break
+
     def finish(self): 
+        button_finish["state"] = "disabled"
         self.stop_threads = True
 
         self.thread_Tmcars = None
@@ -170,6 +192,11 @@ class Controller(object):
         self.thread_check = None
 
         self.selected_site = False
+
+        self.thread_check = Thread(target = lambda: self.check_thread_alive())
+        self.thread_check.start()
+
+        
 
     def output(self, text):
         console_output.insert(Tk.END, f"{text}\n")
@@ -258,10 +285,9 @@ if __name__ == "__main__":
 
     console_output.insert(Tk.END, f"Добро Пожаловать!\n\n{'Информация':-^63}\n")
     console_output.insert(Tk.END, f"1. Введите количество страниц и запустите процесс\n")
-    console_output.insert(Tk.END, f"2. 1 страница = 100 ссылок\n")
+    console_output.insert(Tk.END, f"2. 1 страница = 100 ссылок Tmcars, 20 Naydizdes, 32 Jayym, 20 Turkmenportal\n")
     console_output.insert(Tk.END, f"3. Чтобы спарсить все объявления введите 0\n")
     console_output.insert(Tk.END, f"4. Если бразуер встал - обновите страницу\n")
-    console_output.insert(Tk.END, f"5. Окно браузера нельзя уменьшать меньше чем его значение при открытии\n")
     console_output.insert(Tk.END, f"{'':-^64}\n\n")
 
     root.mainloop()

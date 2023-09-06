@@ -90,6 +90,7 @@ class Naydizdes:
 
         self.Save.links(link_list, "Naydizdes")
         self.output("[Naydizdes] Парсинг ссылок успешно завершился!")
+        self.stop_thread_check("buttons")
 
     def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
@@ -150,12 +151,14 @@ class Naydizdes:
             info["Ссылка на скриншоты"] = path + filename
 
             if take_screenshots:
-                self.Find.sshot(filename, 200)
+                self.Find.sshot(filename, 50)
 
             estate_list.append(info)
 
         self.Save.to_xlsx(estate_list, "Naydizdes", count)
         self.Save.links(link_list, "Naydizdes")
+        self.output("[Naydizdes] Парсинг объявлений успешно завершился!")
+        self.stop_thread_check("buttons")
 
 
 

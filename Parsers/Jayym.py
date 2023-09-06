@@ -62,6 +62,7 @@ class Jayym:
 
         self.Save.links(link_list, "Jayym")
         self.output("[Jayym] Парсинг ссылок успешно завершился!")
+        self.stop_thread_check("buttons")
 
     def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Jayym.txt", "r", encoding="utf8") as file:
@@ -136,6 +137,10 @@ class Jayym:
 
             estate_list.append(info)
 
+        self.Save.to_xlsx(estate_list, "Jayym", count)
+        self.Save.links(link_list)
+        self.output("[Jayym] Парсинг объявлений успешно завершился!")
+        self.stop_thread_check("buttons")
 
 if __name__ == "__main__":
     from Modules.Find import Find

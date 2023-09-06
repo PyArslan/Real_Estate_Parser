@@ -85,6 +85,7 @@ class Tmcars:
 
         self.Save.links(link_list, "Tmcars")
         self.output("[Tmcars] Парсинг ссылок успешно завершился!")
+        self.stop_thread_check("buttons")
 
     def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
@@ -204,6 +205,8 @@ class Tmcars:
 
         self.Save.to_xlsx(estate_list, "Tmcars", count)
         self.Save.links(link_list)
+        self.output("[Tmcars] Парсинг объявлений успешно завершился!")
+        self.stop_thread_check("buttons")
 
 if __name__ == "__main__":
     from Modules.Find import Find
