@@ -18,18 +18,16 @@ class Controller(object):
     
     def __init__(self):
         self.stop_threads = False
-
+        self.thread_check = None
+        self.selected_site = False
+        
         self.thread_Tmcars = None
         self.thread_Turkmenportal = None
         self.thread_Jayym = None
         self.thread_Naydizdes = None
-        self.thread_check = None
-
-        self.selected_site = False
 
     def select_site(self, site):
         self.selected_site = site
-        self.output(f"[Приложение] Выбранный сайт: {self.selected_site}")
 
         if site == "Tmcars":
             txt_link['menu'].delete(0, 'end')
@@ -217,6 +215,8 @@ if __name__ == "__main__":
     width, height = 1360//3, 768//7
     root.geometry(f'550x510+{width}+{height}')
 
+# ============================Variables 1============================ #
+
     label_count = Tk.Label(root, text='Количество страниц: ')
     label_count.place(x=10, y=3) 
 
@@ -241,19 +241,23 @@ if __name__ == "__main__":
     own_link.place(x=320, y=40)  
     own_link.configure(background='#ffffff', borderwidth=2, relief="groove")
 
+# ============================Site Select============================ #
 
-    button_Tmcars = Tk.Button(root, text='Tmcars', width=15, command=lambda: control.select_site("Tmcars"))
+    site = Tk.StringVar(value="None")
+
+    button_Tmcars = Tk.Radiobutton(root, text='Tmcars', value='Tmcars', variable=site, width=15, command=lambda: control.select_site("Tmcars"))
     button_Tmcars.place(x=10, y=70) 
 
-    button_Naydizdes = Tk.Button(root, text='Naydizdes', width=15, command=lambda: control.select_site("Naydizdes"))
-    button_Naydizdes.place(x=150, y=70) 
+    button_Naydizdes = Tk.Radiobutton(root, text='Naydizdes', value='Naydizdes', variable=site, width=15, command=lambda: control.select_site("Naydizdes"))
+    button_Naydizdes.place(x=140, y=70) 
 
-    button_Jayym = Tk.Button(root, text='Jayym', width=15, command=lambda: control.select_site("Jayym"))
+    button_Jayym = Tk.Radiobutton(root, text='Jayym', value='Jayym', variable=site, width=15, command=lambda: control.select_site("Jayym"))
     button_Jayym.place(x=285, y=70) 
 
-    button_Turkmenportal = Tk.Button(root, text='Turkmenportal', width=15, command=lambda: control.select_site("Turkmenportal"))
-    button_Turkmenportal.place(x=420, y=70) 
+    button_Turkmenportal = Tk.Radiobutton(root, text='Turkmenportal', value='Turkmenportal', variable=site, width=15, command=lambda: control.select_site("Turkmenportal"))
+    button_Turkmenportal.place(x=400, y=70) 
 
+# ============================Options Select============================ #
 
     button_start = Tk.Button(root, text='Начать', width=17, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get(), txt_file_path.get(), take_screenshots.get()))
     button_start.place(x=10, y=110) 
@@ -264,6 +268,7 @@ if __name__ == "__main__":
     button_finish = Tk.Button(root, text='Приостановить', width=17, command=control.finish)
     button_finish.place(x=410, y=110)
 
+# ============================Variables 2============================ #
 
     take_screenshots = Tk.IntVar(value=1)
 
@@ -279,13 +284,14 @@ if __name__ == "__main__":
     txt_file_path.place(x=300, y=148) 
     txt_file_path.configure(background='#ffffff', borderwidth=2, relief="groove")
 
+# ============================Console============================ #
 
     console_output = ScrolledText(root, width=64, height=20, font="Fixedsys 12", wrap="word", bg="black", fg="white", bd=4)
     console_output.place(x=7, y=175)
 
     console_output.insert(Tk.END, f"Добро Пожаловать!\n\n{'Информация':-^63}\n")
     console_output.insert(Tk.END, f"1. Выберите сайт, введите количество страниц и запустите процесс\n")
-    console_output.insert(Tk.END, f"2. 1 страница равна: \n\t100 ссылок Tmcars\n\t80 ссылок Naydizdes\n\t32 ссылки Jayym\n\t20 ссылок Turkmenportal\n")
+    console_output.insert(Tk.END, f"2. 1 страница равна: \n\t100 ссылок Tmcars\n\t100 ссылок Naydizdes\n\t32 ссылки Jayym\n\t20 ссылок Turkmenportal\n")
     console_output.insert(Tk.END, f"3. Чтобы спарсить все объявления введите 0\n")
     console_output.insert(Tk.END, f"4. Если бразуер встал - обновите страницу\n")
     console_output.insert(Tk.END, f"5. Если браузер закрылся, а процесс не завершился - Ошибка, обратитесь к разработчику\n")

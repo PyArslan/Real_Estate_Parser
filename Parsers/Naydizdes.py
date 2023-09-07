@@ -106,7 +106,7 @@ class Naydizdes:
             if self.stop_thread_check() == True:
                 self.Save.to_xlsx(estate_list, "Naydizdes", count)
                 self.Save.links(link_list, "Naydizdes")
-                self.output("[Naydizdes] Парсинг объявлений успешно остановился!")
+                self.output("[Naydizdes] Парсинг объявлений успешно остановился!\n")
                 return 1
             
             if count % 1000 == 0 and count != 0:
