@@ -4,7 +4,15 @@ import datetime
 class Naydizdes:
 
     def __init__(self, Find, Save, stop_thread_check, output=print):
-        self.Find = Find()
+        try:
+            self.Find = Find()
+        except self.Find.NSDE:
+            self.output("[Ошибка] Отсутствует chromedriver.exe, Вы можете скачать его здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
+            return 0
+        except self.Find.SNCE:
+            self.output("[Ошибка] Версия chromedriver.exe не совместима с версией вашего браузера, Вы можете скачать нужную версию здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
+            return 0
+        
         self.Save = Save
         self.output = output
         self.stop_thread_check = stop_thread_check
