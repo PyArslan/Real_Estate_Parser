@@ -89,12 +89,13 @@ class Naydizdes:
                 link_list.append(i.get_attribute('href'))
 
         self.Save.links(link_list, "Naydizdes")
-        self.output("[Naydizdes] Парсинг ссылок успешно завершился!")
+        self.output("[Naydizdes] Парсинг ссылок успешно завершился!\n")
         
         # self.stop_thread_check("buttons")
         self.parse_cards(path, take_screenshots)
 
     def parse_cards(self, path, take_screenshots):
+        self.output("[Naydizdes] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
             file.close()
@@ -114,7 +115,7 @@ class Naydizdes:
 
 
             link = link_list.pop(0)
-            self.output(f"{count+1}. {link}")
+            self.output(f"{count+1}. {link}\n")
 
             try:
                 self.Find.get(link)
@@ -159,7 +160,7 @@ class Naydizdes:
 
         self.Save.to_xlsx(estate_list, "Naydizdes", count)
         self.Save.links(link_list, "Naydizdes")
-        self.output("[Naydizdes] Парсинг объявлений успешно завершился!")
+        self.output(f"[Naydizdes] Парсинг объявлений успешно завершился!\nКоличество объявлений: {count+1}\n")
         self.stop_thread_check("buttons")
         
 

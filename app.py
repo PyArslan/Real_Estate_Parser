@@ -255,14 +255,14 @@ if __name__ == "__main__":
     button_Turkmenportal.place(x=420, y=70) 
 
 
-    button_start = Tk.Button(root, text='Начать парсинг ссылок', width=22, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get(), txt_file_path.get(), take_screenshots.get()))
+    button_start = Tk.Button(root, text='Начать', width=17, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get(), txt_file_path.get(), take_screenshots.get()))
     button_start.place(x=10, y=110) 
 
-    button_continue = Tk.Button(root, text='Продолжить парсинг объявлений', width=28, command=lambda: control.continue_parsing(txt_file_path.get(), take_screenshots.get()))
-    button_continue.place(x=195, y=110) 
+    button_continue = Tk.Button(root, text='Продолжить', width=17, command=lambda: control.continue_parsing(txt_file_path.get(), take_screenshots.get()))
+    button_continue.place(x=210, y=110) 
 
-    button_finish = Tk.Button(root, text='Приостановить', width=15, command=control.finish)
-    button_finish.place(x=420, y=110)
+    button_finish = Tk.Button(root, text='Приостановить', width=17, command=control.finish)
+    button_finish.place(x=410, y=110)
 
 
     take_screenshots = Tk.IntVar(value=1)
@@ -284,10 +284,11 @@ if __name__ == "__main__":
     console_output.place(x=7, y=175)
 
     console_output.insert(Tk.END, f"Добро Пожаловать!\n\n{'Информация':-^63}\n")
-    console_output.insert(Tk.END, f"1. Введите количество страниц и запустите процесс\n")
-    console_output.insert(Tk.END, f"2. 1 страница = 100 ссылок Tmcars, 20 Naydizdes, 32 Jayym, 20 Turkmenportal\n")
+    console_output.insert(Tk.END, f"1. Выберите сайт, введите количество страниц и запустите процесс\n")
+    console_output.insert(Tk.END, f"2. 1 страница равна: \n\t100 ссылок Tmcars\n\t80 ссылок Naydizdes\n\t32 ссылки Jayym\n\t20 ссылок Turkmenportal\n")
     console_output.insert(Tk.END, f"3. Чтобы спарсить все объявления введите 0\n")
     console_output.insert(Tk.END, f"4. Если бразуер встал - обновите страницу\n")
+    console_output.insert(Tk.END, f"5. Если браузер закрылся, а процесс не завершился - Ошибка, обратитесь к разработчику\n")
     console_output.insert(Tk.END, f"{'':-^64}\n\n")
 
     root.mainloop()

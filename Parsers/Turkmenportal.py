@@ -47,12 +47,13 @@ class Turkmenportal:
                     link_list.append(card.get_attribute('href'))
 
         self.Save.links(link_list, "Turkmenportal")
-        self.output("[Turkmenportal] Парсинг ссылок успешно завершился!")
+        self.output("[Turkmenportal] Парсинг ссылок успешно завершился!\n")
         
         # self.stop_thread_check("buttons")
         self.parse_cards(path, take_screenshots)
 
     def parse_cards(self, path, take_screenshots):
+        self.output("[Turkmenportal] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
                 file.close()
@@ -63,7 +64,7 @@ class Turkmenportal:
             if self.stop_thread_check() == True:
                 self.Save.to_xlsx(estate_list, "Turkmenportal", count)
                 self.Save.links(link_list, "Turkmenportal")
-                self.output("[Turkmenportal] Парсинг объявлений успешно остановился!")
+                self.output("[Turkmenportal] Парсинг объявлений успешно остановился!\n")
                 return 1
             
             if count % 1000 == 0 and count != 0:
@@ -72,7 +73,7 @@ class Turkmenportal:
 
 
             link = link_list.pop(0)
-            self.output(f"{count+1}. {link}")
+            self.output(f"{count+1}. {link}\n")
 
             try:
                 self.Find.get(link)
@@ -120,8 +121,8 @@ class Turkmenportal:
 
 
         self.Save.to_xlsx(estate_list, "Turkmenportal", count)
-        self.Save.links(link_list)
-        self.output("[Turkmenportal] Парсинг объявлений успешно завершился!")
+        self.Save.links(link_list, "Turkmenportal")
+        self.output(f"[Turkmenportal] Парсинг объявлений успешно завершился!\nКоличество объявлений: {count+1}\n")
         self.stop_thread_check("buttons")
         
 
