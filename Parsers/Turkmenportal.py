@@ -17,7 +17,7 @@ class Turkmenportal:
             self.output("[Turkmenportal->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
 
-    def parse_links(self, own_link, count_pages=0):
+    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_screenshots=1):
         link_list = []
 
         if count_pages == 0:
@@ -48,7 +48,9 @@ class Turkmenportal:
 
         self.Save.links(link_list, "Turkmenportal")
         self.output("[Turkmenportal] Парсинг ссылок успешно завершился!")
-        self.stop_thread_check("buttons")
+        
+        # self.stop_thread_check("buttons")
+        self.parse_cards(path, take_screenshots)
 
     def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
@@ -121,6 +123,7 @@ class Turkmenportal:
         self.Save.links(link_list)
         self.output("[Turkmenportal] Парсинг объявлений успешно завершился!")
         self.stop_thread_check("buttons")
+        
 
 
 if __name__ == "__main__":

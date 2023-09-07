@@ -110,7 +110,7 @@ class Controller(object):
 
         
 
-    def start(self, count_pages, link, own_link):
+    def start(self, count_pages, link, own_link, path, take_screenshots):
         button_start["state"] = "disabled"
         button_continue["state"] = "disabled"
 
@@ -131,13 +131,13 @@ class Controller(object):
             return 0
         
         if self.selected_site == "Tmcars":
-            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
         elif self.selected_site == "Turkmenportal":
-            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
         elif self.selected_site == "Jayym":
-            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
         elif self.selected_site == "Naydizdes":
-            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages))
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
 
         self.thread.start()
 
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     button_Turkmenportal.place(x=420, y=70) 
 
 
-    button_start = Tk.Button(root, text='Начать парсинг ссылок', width=22, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get()))
+    button_start = Tk.Button(root, text='Начать парсинг ссылок', width=22, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get(), txt_file_path.get(), take_screenshots.get()))
     button_start.place(x=10, y=110) 
 
     button_continue = Tk.Button(root, text='Продолжить парсинг объявлений', width=28, command=lambda: control.continue_parsing(txt_file_path.get(), take_screenshots.get()))

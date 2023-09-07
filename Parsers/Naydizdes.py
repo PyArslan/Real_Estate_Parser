@@ -64,7 +64,7 @@ class Naydizdes:
         
 
 
-    def parse_links(self, own_link, count_pages=0):
+    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_screenshots=1):
         link_list = []
 
         self.Find.get(own_link)
@@ -90,7 +90,9 @@ class Naydizdes:
 
         self.Save.links(link_list, "Naydizdes")
         self.output("[Naydizdes] Парсинг ссылок успешно завершился!")
-        self.stop_thread_check("buttons")
+        
+        # self.stop_thread_check("buttons")
+        self.parse_cards(path, take_screenshots)
 
     def parse_cards(self, path, take_screenshots):
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
@@ -159,7 +161,7 @@ class Naydizdes:
         self.Save.links(link_list, "Naydizdes")
         self.output("[Naydizdes] Парсинг объявлений успешно завершился!")
         self.stop_thread_check("buttons")
-
+        
 
 
 if __name__ == "__main__":
