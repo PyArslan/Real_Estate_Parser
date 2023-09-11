@@ -116,6 +116,8 @@ class Controller(object):
             count_pages = int(count_pages)
         except ValueError:
             self.output("[Ошибка] Некорректное значение страниц!")
+            button_start["state"] = "normal"
+            button_continue["state"] = "normal"
             return 0
 
         if own_link:
@@ -126,6 +128,8 @@ class Controller(object):
 
         if not self.selected_site:
             self.output("[Ошибка] Выберите сайт!")
+            button_start["state"] = "normal"
+            button_continue["state"] = "normal"
             return 0
         
         if self.selected_site == "Tmcars":
@@ -148,10 +152,14 @@ class Controller(object):
 
         if not self.selected_site:
             self.output("[Ошибка] Выберите сайт!")
+            button_start["state"] = "normal"
+            button_continue["state"] = "normal"
             return 0
         
         if not path:
             self.output("[Ошибка] Укажить путь до скриншотов!")
+            button_start["state"] = "normal"
+            button_continue["state"] = "normal"
             return 0
         
         if path[-1] != "\\":

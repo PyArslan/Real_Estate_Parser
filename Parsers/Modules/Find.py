@@ -30,7 +30,7 @@ class Find:
 
         self.today = datetime.datetime.today().strftime('%d-%m-%Y_%H-%M-%S')
         self.driver = webdriver.Chrome(options=option)
-        self.driver.set_window_position(-10000, 0, windowHandle='current')
+        # self.driver.set_window_position(-10000, 0, windowHandle='current')
 
         self.NSEE = NoSuchElementException
         self.TE = TimeoutException
@@ -64,7 +64,6 @@ class Find:
         self.driver.close()
 
     def wait_until(self, xpath, num):
-        self.driver.find_element(By.XPATH, xpath).is_displayed()
         return WebDriverWait(self.driver, num).until(EC.presence_of_element_located((By.XPATH, xpath)))
     
     def sshot(self,  filename, scroll):

@@ -86,7 +86,7 @@ class Tmcars:
 
 
             self.output(f"[Tmcars] Страница: {page+1}")
-            card_list = self.Find.xs("//div[@class='item7-card-img']/a")
+            card_list = self.Find.xs("//div[contains(@class, 'item7-card-img')]/a")
 
             for card in card_list:
                 link_list.append(card.get_attribute('href'))
