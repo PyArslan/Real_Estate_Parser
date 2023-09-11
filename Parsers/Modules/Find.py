@@ -11,9 +11,10 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchDriverException
 from selenium.common.exceptions import SessionNotCreatedException
 
-import time
+from time import sleep
 import datetime
 import os
+import urllib
 
 
 """ Класс с упрощённым синтаксисом для более удобного нахождения элементов по xpath """
@@ -44,8 +45,11 @@ class Find:
     def xs(self, xpath):
         return self.driver.find_elements(By.XPATH, xpath)
 
-    def xcl(self, xpath):
-        self.driver.find_element(By.XPATH, xpath).click()
+    def xcl(self, xpath, method=1):
+        if method == 1:
+            self.driver.find_element(By.XPATH, xpath).click()
+        elif method == 2:
+            self.driver.execute_script("arguments[0].click();", self.driver.find_element(By.XPATH, xpath))
 
     def xsk(self, xpath, keys):
         self.driver.find_element(By.XPATH, xpath).send_keys(keys)
@@ -60,15 +64,27 @@ class Find:
         self.driver.close()
 
     def wait_until(self, xpath, num):
-        # self.driver.find_element(By.XPATH, xpath).is_displayed()
+        self.driver.find_element(By.XPATH, xpath).is_displayed()
         return WebDriverWait(self.driver, num).until(EC.presence_of_element_located((By.XPATH, xpath)))
     
     def sshot(self,  filename, scroll):
         self.driver.execute_script("document.body.style.zoom='60%'")
         self.driver.execute_script(f"window.scrollTo(0, {scroll})")
-        time.sleep(2)
+        sleep(2)
         
         if not os.path.exists(f"Parse_Files\\Pictures_{self.today}"):
             os.makedirs(f"Parse_Files\\Pictures_{self.today}")
 
         self.driver.get_screenshot_as_file(f'Parse_Files\\Pictures_{self.today}\\{filename}.png') 
+
+    def scroll(self, pos):
+        self.driver.execute_script(f"window.scrollTo(0, {pos})")
+
+    def image(self, src, filename):
+        try:
+            urllib.request.urlretrieve(src, filename)
+        except urllib.error.URLError:
+            sleep(3)
+            urllib.request.urlretrieve(src, filename)
+        except TypeError:
+          print("TypeError during downloading file, continue")
