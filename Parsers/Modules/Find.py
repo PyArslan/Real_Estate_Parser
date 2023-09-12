@@ -30,7 +30,7 @@ class Find:
 
         self.today = datetime.datetime.today().strftime('%d-%m-%Y_%H-%M-%S')
         self.driver = webdriver.Chrome(options=option)
-        # self.driver.set_window_position(-10000, 0, windowHandle='current')
+        self.driver.set_window_position(-10000, 0, windowHandle='current')
 
         self.NSEE = NoSuchElementException
         self.TE = TimeoutException
@@ -85,5 +85,3 @@ class Find:
         except urllib.error.URLError:
             sleep(3)
             urllib.request.urlretrieve(src, filename)
-        except TypeError:
-          print("TypeError during downloading file, continue")

@@ -108,7 +108,7 @@ class Controller(object):
 
         
 
-    def start(self, count_pages, link, own_link, path, take_screenshots):
+    def start(self, count_pages, link, own_link, path, take_photos):
         button_start["state"] = "disabled"
         button_continue["state"] = "disabled"
 
@@ -133,18 +133,18 @@ class Controller(object):
             return 0
         
         if self.selected_site == "Tmcars":
-            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_photos))
         elif self.selected_site == "Turkmenportal":
-            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_photos))
         elif self.selected_site == "Jayym":
-            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_photos))
         elif self.selected_site == "Naydizdes":
-            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_screenshots))
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_links(link, count_pages, path, take_photos))
 
         self.thread.start()
 
 
-    def continue_parsing(self, path, take_screenshots):
+    def continue_parsing(self, path, take_photos):
         button_start["state"] = "disabled"
         button_continue["state"] = "disabled"
 
@@ -166,13 +166,13 @@ class Controller(object):
             path = path + "\\"
 
         if self.selected_site == "Tmcars":
-            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
+            self.thread = Thread(target = lambda: Tmcars(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_photos))
         elif self.selected_site == "Turkmenportal":
-            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
+            self.thread = Thread(target = lambda: Turkmenportal(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_photos))
         elif self.selected_site == "Jayym":
-            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
+            self.thread = Thread(target = lambda: Jayym(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_photos))
         elif self.selected_site == "Naydizdes":
-            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_screenshots))
+            self.thread = Thread(target = lambda: Naydizdes(Find, Save, self.stop_thread_check, self.output).parse_cards(path, take_photos))
 
         self.thread.start()
 
@@ -267,10 +267,10 @@ if __name__ == "__main__":
 
 # ============================Options Select============================ #
 
-    button_start = Tk.Button(root, text='Начать', width=17, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get(), txt_file_path.get(), take_screenshots.get()))
+    button_start = Tk.Button(root, text='Начать', width=17, command = lambda: control.start(txt_count.get(), link_variables.get(), own_link.get(), txt_file_path.get(), take_photos.get()))
     button_start.place(x=10, y=110) 
 
-    button_continue = Tk.Button(root, text='Продолжить', width=17, command=lambda: control.continue_parsing(txt_file_path.get(), take_screenshots.get()))
+    button_continue = Tk.Button(root, text='Продолжить', width=17, command=lambda: control.continue_parsing(txt_file_path.get(), take_photos.get()))
     button_continue.place(x=210, y=110) 
 
     button_finish = Tk.Button(root, text='Приостановить', width=17, command=control.finish)
@@ -278,13 +278,13 @@ if __name__ == "__main__":
 
 # ============================Variables 2============================ #
 
-    take_screenshots = Tk.IntVar(value=1)
+    take_photos = Tk.IntVar(value=1)
 
-    CheckScreenshots = Tk.Checkbutton(root, text='Скриншоты',variable=take_screenshots, onvalue=1, offvalue=0)
-    CheckScreenshots.place(x=10, y=148)
+    CheckPhotos = Tk.Checkbutton(root, text='Фото',variable=take_photos, onvalue=1, offvalue=0)
+    CheckPhotos.place(x=10, y=148)
 
 
-    label_file_path = Tk.Label(root, text='Путь к скриншотам: ')
+    label_file_path = Tk.Label(root, text='Путь к Фото: ')
     label_file_path.place(x=175, y=148) 
 
     txt_file_path = Tk.Entry(root, width=36)  

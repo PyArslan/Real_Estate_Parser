@@ -1,5 +1,6 @@
 import time
 import datetime
+from os import makedirs
 
 class Tmcars:
     
@@ -50,7 +51,7 @@ class Tmcars:
 
         return formatted_date
 
-    def parse_links(self, our_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_screenshots=1):
+    def parse_links(self, our_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_photos=1):
 
         link_list = []
 
@@ -95,9 +96,9 @@ class Tmcars:
         self.output("[Tmcars] Парсинг ссылок успешно завершился!\n")
         
         # self.stop_thread_check("buttons")
-        self.parse_cards(path, take_screenshots)
+        self.parse_cards(path, take_photos)
 
-    def parse_cards(self, path, take_screenshots):
+    def parse_cards(self, path, take_photos):
         self.output("[Tmcars] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
@@ -205,11 +206,45 @@ class Tmcars:
                 else:
                     card.append(info.text.split(":"))
 
-            filename = "Tmcars_" + link.split("/")[-2]
-            card.append(["Ссылка на скриншоты", path + filename])
+            dirname = link.split("/")[-2]
 
-            if take_screenshots:
-                self.Find.sshot(filename, 200)
+            if take_photos:
+                self.Find.scroll(200)
+                flag = True
+
+                for i in range(4):
+                    try:
+                        self.Find.xcl("//div[@class='card-body h-100']//a[@class='iis-next-nav']", 2)
+                        time.sleep(2)
+                    except self.Find.NSEE:
+                        print("[NSEE] No photos - Continue", end=f'\n{"":=^30}\n')
+                        flag = False
+                        break
+
+                if flag:
+                    photos = [i.get_attribute('data-src') for i in self.Find.xs("//div[@class='card-body h-100']//a")]
+                    # print(photos)
+
+                    try:
+                        makedirs(f"Parse_Files\\Tmcars\\{dirname}")
+                    except FileExistsError:
+                        pass
+
+                    count_photos = 1
+
+                    for i in photos:
+                        try:
+                            self.Find.image(i, f"Parse_Files\\Tmcars\\{dirname}\\{count_photos}.png")
+                            count_photos += 1
+                        except ValueError as e:
+                            print(f"[ValueError] {e}")
+                        except TypeError:
+                            print("[TypeError] NoneType File - Continue")
+                            
+                    card.append(["Ссылка на скриншоты", path + dirname])
+                    
+                    print(f'\n{"":=^30}\n')
+    
 
             estate_list.append({key.strip(): value.strip() for key,value in card})
 
