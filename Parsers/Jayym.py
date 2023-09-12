@@ -1,4 +1,4 @@
-
+from os import makedirs
 
 class Jayym:
 
@@ -37,7 +37,7 @@ class Jayym:
 
         return array
 
-    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_screenshots=1):
+    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_photos=1):
 
         link_list = []
 
@@ -72,9 +72,9 @@ class Jayym:
         self.output("[Jayym] Парсинг ссылок успешно завершился!\n")
 
         # self.stop_thread_check("buttons")
-        self.parse_cards(path, take_screenshots)
+        self.parse_cards(path, take_photos)
 
-    def parse_cards(self, path, take_screenshots):
+    def parse_cards(self, path, take_photos):
         self.output("[Jayym] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Jayym.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
@@ -140,11 +140,28 @@ class Jayym:
             except KeyError:
                 pass
         
-            filename = "Jayym_" + link.split("-")[-1][:-5]
-            info["Ссылка на скриншоты"] = path + filename
+            filename = link.split("-")[-1][:-5]
 
-            if take_screenshots:
-                self.Find.sshot(filename, 200)
+            if take_photos:
+                flag = True
+                try:
+                    photos = [i.get_attribute('src') for i in self.Find.xs("//section[@class='main-section']//img")]
+                    # print(photos)
+                except self.Find.NSEE:
+                    flag = False
+
+                if flag:
+                    try:
+                        makedirs(f"Parse_Files\\Jayym\\{filename}")
+                    except FileExistsError:
+                        pass
+
+                    count = 1
+                    for i in photos:
+                        self.Find.image(i, f"Parse_Files\\Jayym\\{filename}\\{count}.png")
+                        count += 1
+    
+                    info["Ссылка на скриншоты"] = path + filename
 
             estate_list.append(info)
 
