@@ -1,4 +1,4 @@
-
+from os import makedirs
 
 
 class Turkmenportal:
@@ -25,7 +25,7 @@ class Turkmenportal:
             self.output("[Turkmenportal->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
             return 0
 
-    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_screenshots=1):
+    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_photos=1):
         link_list = []
 
         if count_pages == 0:
@@ -58,9 +58,9 @@ class Turkmenportal:
         self.output("[Turkmenportal] Парсинг ссылок успешно завершился!\n")
         
         # self.stop_thread_check("buttons")
-        self.parse_cards(path, take_screenshots)
+        self.parse_cards(path, take_photos)
 
-    def parse_cards(self, path, take_screenshots):
+    def parse_cards(self, path, take_photos):
         self.output("[Turkmenportal] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
@@ -108,7 +108,7 @@ class Turkmenportal:
                     price = float(data)
                     card.append(["Цена предложения ТМТ", data[:data.find(".")]])
 
-            if price != None and square != None:
+            if price not in [None, 0] and square not in [None, 0]:
                 card.append(["Цена за 1 кв.метр", str(round(price/square, 2))])
 
             card.append(["Примечание", self.Find.x("//div[@class='description-content']/p").text])
@@ -118,11 +118,29 @@ class Turkmenportal:
                 if "+" in i or i.isdigit() == True:
                     card.append(["Конт.номер", i])
 
-            filename = "Turkmenportal_" + link.split("/")[-1]
-            card.append(["Ссылка на скриншоты", path + filename])
+            
 
-            if take_screenshots:
-                self.Find.sshot(filename, 200)
+            if take_photos:
+                dirname = link.split("/")[-1]
+                flag = True
+
+                try:
+                    photos = [i.get_attribute('src') for i in self.Find.xs("//div[@class='gallery']//img[@u='image']")]
+                except self.Find.NSEE:
+                    flag = False
+
+                if flag and photos:
+                    card.append(["Ссылка на скриншоты", path + dirname])
+
+                    try:
+                        makedirs(f"Parse_Files\\Turkmenportal\\{dirname}")
+                    except FileExistsError:
+                        pass
+
+                    count_photos = 1
+                    for i in photos:
+                        self.Find.image(i, f"Parse_Files\\Turkmenportal\\{dirname}\\{count_photos}.png")
+                        count_photos += 1
 
 
             estate_list.append({key.strip(): value.strip() for key,value in card})

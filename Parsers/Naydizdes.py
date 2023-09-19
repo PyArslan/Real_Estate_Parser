@@ -1,4 +1,4 @@
-
+from os import makedirs
 import datetime
 
 class Naydizdes:
@@ -72,7 +72,7 @@ class Naydizdes:
         
 
 
-    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_screenshots=1):
+    def parse_links(self, own_link, count_pages=0, path="D:\\ScreenshotsEstate\\", take_photos=1):
         link_list = []
 
         self.Find.get(own_link)
@@ -100,9 +100,9 @@ class Naydizdes:
         self.output("[Naydizdes] Парсинг ссылок успешно завершился!\n")
         
         # self.stop_thread_check("buttons")
-        self.parse_cards(path, take_screenshots)
+        self.parse_cards(path, take_photos)
 
-    def parse_cards(self, path, take_screenshots):
+    def parse_cards(self, path, take_photos):
         self.output("[Naydizdes] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
@@ -158,11 +158,28 @@ class Naydizdes:
             except KeyError:
                 pass
 
-            filename = "Naydizdes_" + link.split("-")[-1][:-5]
-            info["Ссылка на скриншоты"] = path + filename
+            
+            if take_photos:
+                flag = True
+                dirname = link.split("-")[-1][:-5]
 
-            if take_screenshots:
-                self.Find.sshot(filename, 50)
+                try:
+                    photos = [i.get_attribute('src') for i in self.Find.xs("//div[contains(@class, 'gallery_slider gallery_slider_multi')]//img")]
+                except self.Find.NSEE:
+                    flag = False
+
+                if flag and photos:
+                    info["Ссылка на скриншоты"] = path + dirname
+
+                    try:
+                        makedirs(f"Parse_Files\\Naydizdes\\{dirname}")
+                    except FileExistsError:
+                        pass
+
+                    count_photos = 1
+                    for i in photos:
+                        self.Find.image(i, f"Parse_Files\\Naydizdes\\{dirname}\\{count_photos}.png", method=2)
+                        count_photos += 1
 
             estate_list.append(info)
 

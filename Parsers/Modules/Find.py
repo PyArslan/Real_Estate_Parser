@@ -11,11 +11,11 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchDriverException
 from selenium.common.exceptions import SessionNotCreatedException
 
-from time import sleep
+from time import sleep, monotonic
 import datetime
 import os
 import urllib
-
+from threading import Thread
 
 """ Класс с упрощённым синтаксисом для более удобного нахождения элементов по xpath """
 class Find:
@@ -79,9 +79,33 @@ class Find:
     def scroll(self, pos):
         self.driver.execute_script(f"window.scrollTo(0, {pos})")
 
-    def image(self, src, filename):
-        try:
-            urllib.request.urlretrieve(src, filename)
-        except urllib.error.URLError:
-            sleep(3)
-            urllib.request.urlretrieve(src, filename)
+    def image(self, src, filename, method=1):
+        if method == 2:
+            def download(opener, src, filename):
+                try:
+                    filename, headers = opener.retrieve(src, filename)
+                except OSError:
+                    sleep(3)
+                    filename, headers = opener.retrieve(src, filename)
+
+            opener = urllib.request.URLopener()
+            opener.addheader('User-Agent', 'whatever')
+            th = Thread(target=download, args=(opener, src, filename, ))
+            th.start()
+
+            for i in range(10):
+                sleep(1)
+                if not th.is_alive() or th is None:
+                    return 1
+                
+                elif th.is_alive() and i >= 5:
+                    th = None
+                    break
+
+
+        elif method == 1:
+            try:
+                urllib.request.urlretrieve(src, filename)
+            except urllib.error.URLError:
+                sleep(3)
+                urllib.request.urlretrieve(src, filename)
