@@ -109,3 +109,5 @@ class Find:
             except urllib.error.URLError:
                 sleep(3)
                 urllib.request.urlretrieve(src, filename)
+            except urllib.error.HTTPError:
+                pass

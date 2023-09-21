@@ -143,6 +143,10 @@ class Controller(object):
 
         self.thread.start()
 
+        if shutdown.get() == 1:
+            self.thread_check = Thread(target = lambda: self.check_thread_alive(shutdown=True, time_sleep=10))
+            self.thread_check.start()
+
 
     def continue_parsing(self, path, take_photos):
         button_start["state"] = "disabled"
@@ -176,15 +180,21 @@ class Controller(object):
 
         self.thread.start()
 
+        if shutdown.get() == 1:
+            self.thread_check = Thread(target = lambda: self.check_thread_alive(shutdown=True, time_sleep=10))
+            self.thread_check.start()
 
-    def check_thread_alive(self):
+
+    def check_thread_alive(self, shutdown=False, time_sleep=3):
         while True:
             if self.thread.is_alive():
-                sleep(3)
+                sleep(time_sleep)
             else:
                 button_start["state"] = "normal"
                 button_continue["state"] = "normal"
                 button_finish["state"] = "normal"
+                if shutdown:
+                    os.system("shutdown /s /t 120")
                 break
 
     def finish(self): 
@@ -278,14 +288,19 @@ if __name__ == "__main__":
 
 # ============================Variables 2============================ #
 
+    shutdown = Tk.IntVar(value=0)
+
+    CheckShutdown = Tk.Checkbutton(root, text='Выключение ПК',variable=shutdown, onvalue=1, offvalue=0)
+    CheckShutdown.place(x=10, y=145)
+
     take_photos = Tk.IntVar(value=1)
 
     CheckPhotos = Tk.Checkbutton(root, text='Фото',variable=take_photos, onvalue=1, offvalue=0)
-    CheckPhotos.place(x=10, y=148)
+    CheckPhotos.place(x=145, y=145)
 
 
     label_file_path = Tk.Label(root, text='Путь к Фото: ')
-    label_file_path.place(x=175, y=148) 
+    label_file_path.place(x=220, y=148) 
 
     txt_file_path = Tk.Entry(root, width=36)  
     txt_file_path.insert(Tk.END, "D:\\ScreenshotsEstate\\")
