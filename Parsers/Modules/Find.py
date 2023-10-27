@@ -11,13 +11,13 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.common.exceptions import NoSuchDriverException
 from selenium.common.exceptions import SessionNotCreatedException
 
-from time import sleep, monotonic
-import datetime
+from time import sleep
+from datetime import datetime
 import os
 import urllib
 from threading import Thread
 
-""" Класс с упрощённым синтаксисом для более удобного нахождения элементов по xpath """
+""" Класс с упрощённой инициализацией драйвера и более удобного нахождения элементов по xpath """
 class Find:
 
     def __init__(self):
@@ -28,7 +28,7 @@ class Find:
         option.add_argument("--window-size=1900,1080")
         option.add_argument("--disable-notifications")
 
-        self.today = datetime.datetime.today().strftime('%d-%m-%Y_%H-%M-%S')
+        self.today = datetime.today().strftime('%d-%m-%Y_%H-%M-%S')
         self.driver = webdriver.Chrome(options=option)
         self.driver.set_window_position(-10000, 0, windowHandle='current')
 
