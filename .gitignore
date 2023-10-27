@@ -4,6 +4,6 @@ __pycache__/
 Parse_Files/
 *.exe
 *.spec
-*.txt
+/*.txt/
 *.xlsx
 testing*.py
