@@ -7,3 +7,4 @@ Parse_Files/
 /*.txt/
 *.xlsx
 testing*.py
+venv/
