@@ -1,20 +1,25 @@
 from os import makedirs
+from selenium.common.exceptions import SessionNotCreatedException as SNCE
+from selenium.common.exceptions import NoSuchDriverException as NSDE
 
 class Jayym:
 
     def __init__(self, Find, Save, stop_thread_check, output=print):
-        try:
-            self.Find = Find()
-        except self.Find.NSDE:
-            self.output("[Ошибка] Отсутствует chromedriver.exe, Вы можете скачать его здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
-            return 0
-        except self.Find.SNCE:
-            self.output("[Ошибка] Версия chromedriver.exe не совместима с версией вашего браузера, Вы можете скачать нужную версию здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
-            return 0
         
         self.Save = Save
         self.output = output
         self.stop_thread_check = stop_thread_check
+    
+        try:
+            self.Find = Find()
+        except NSDE:
+            self.output("[Ошибка] Отсутствует chromedriver.exe, Вы можете скачать его здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
+            self.stop_thread_check("buttons")
+            return 0
+        except SNCE:
+            self.output("[Ошибка] Версия chromedriver.exe не совместима с версией вашего браузера, Вы можете скачать нужную версию здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
+            self.stop_thread_check("buttons")
+            return 0
 
         self.output("[Jayym] Начинаю парсинг...")
 
@@ -22,6 +27,7 @@ class Jayym:
             self.Find.get("https://jayym.com/properties.html")
         except self.Find.WE:
             self.output("[Jayym->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            self.stop_thread_check("buttons")
             return 0
 
     @staticmethod
@@ -81,6 +87,8 @@ class Jayym:
             file.close()
 
         estate_list = []
+
+        self.output(f"Количество объявлений: {len(link_list)}")
 
         for count in range(len(link_list)):
             if self.stop_thread_check() == True:
@@ -156,10 +164,10 @@ class Jayym:
                     except FileExistsError:
                         pass
 
-                    count = 1
+                    count_photo = 1
                     for i in photos:
-                        self.Find.image(i, f"Parse_Files\\Jayym\\{filename}\\{count}.png")
-                        count += 1
+                        self.Find.image(i, f"Parse_Files\\Jayym\\{filename}\\{count_photo}.png")
+                        count_photo += 1
     
                     info["Ссылка на скриншоты"] = path + filename
 

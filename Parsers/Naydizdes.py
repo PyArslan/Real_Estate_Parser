@@ -1,21 +1,26 @@
 from os import makedirs
 import datetime
+from selenium.common.exceptions import SessionNotCreatedException as SNCE
+from selenium.common.exceptions import NoSuchDriverException as NSDE
 
 class Naydizdes:
 
     def __init__(self, Find, Save, stop_thread_check, output=print):
-        try:
-            self.Find = Find()
-        except self.Find.NSDE:
-            self.output("[Ошибка] Отсутствует chromedriver.exe, Вы можете скачать его здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
-            return 0
-        except self.Find.SNCE:
-            self.output("[Ошибка] Версия chromedriver.exe не совместима с версией вашего браузера, Вы можете скачать нужную версию здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
-            return 0
-        
+
         self.Save = Save
         self.output = output
         self.stop_thread_check = stop_thread_check
+        
+        try:
+            self.Find = Find()
+        except NSDE:
+            self.output("[Ошибка] Отсутствует chromedriver.exe, Вы можете скачать его здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
+            self.stop_thread_check("buttons")
+            return 0
+        except SNCE:
+            self.output("[Ошибка] Версия chromedriver.exe не совместима с версией вашего браузера, Вы можете скачать нужную версию здесь: https://googlechromelabs.github.io/chrome-for-testing/\nВыберите версию подходящую для вашего Google Chrome и переместите его в папку с программой\n")
+            self.stop_thread_check("buttons")
+            return 0
 
         self.output("[Naydizdes] Начинаю парсинг...")
 
@@ -23,6 +28,7 @@ class Naydizdes:
             self.Find.get("https://www.naydizdes.com/nedvijimost/")
         except self.Find.WE:
             self.output("[Naydizdes->Ошибка] Не удалось подключиться. Попробуёте зайти на сайт вручную, если получится то обратитесь к разработчику, если нет - проблема на самом сайте")
+            self.stop_thread_check("buttons")
             return 0
 
     @staticmethod
@@ -110,6 +116,8 @@ class Naydizdes:
 
         estate_list = []
 
+        self.output(f"Количество объявлений: {len(link_list)}")
+        
         for count in range(len(link_list)):
             if self.stop_thread_check() == True:
                 self.Save.to_xlsx(estate_list, "Naydizdes", count)
