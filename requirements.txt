@@ -1,3 +1,6 @@
 selenium==4.10.0
 pandas==2.0.3
 openpyxl==3.1.2
+
+# python==3.11
+# pyinstaller --ico=house.ico --noconsole --hidden-import=pandas app.py
