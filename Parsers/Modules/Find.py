@@ -104,10 +104,11 @@ class Find:
 
 
         elif method == 1:
-            try:
-                urllib.request.urlretrieve(src, filename)
-            except urllib.error.URLError:
-                sleep(3)
-                urllib.request.urlretrieve(src, filename)
-            except urllib.error.HTTPError:
-                pass
+            for _ in range(2):
+                try:
+                    urllib.request.urlretrieve(src, filename)
+                    break
+                except urllib.error.URLError:
+                    sleep(3)
+                except urllib.error.HTTPError:
+                    sleep(3)
