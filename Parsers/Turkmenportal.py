@@ -1,4 +1,5 @@
 from os import makedirs
+from datetime import datetime
 from selenium.common.exceptions import SessionNotCreatedException as SNCE
 from selenium.common.exceptions import NoSuchDriverException as NSDE
 
@@ -66,6 +67,9 @@ class Turkmenportal:
         self.parse_cards(path, take_photos)
 
     def parse_cards(self, path, take_photos):
+
+        cur_datetime = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
+
         self.output("[Turkmenportal] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Turkmenportal.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
@@ -140,13 +144,13 @@ class Turkmenportal:
                     card.append(["Ссылка на скриншоты", path + dirname])
 
                     try:
-                        makedirs(f"Parse_Files\\Turkmenportal\\{dirname}")
+                        makedirs(f"Parse_Files\\Turkmenportal_{cur_datetime}\\{dirname}")
                     except FileExistsError:
                         pass
 
                     count_photos = 1
                     for i in photos:
-                        self.Find.image(i, f"Parse_Files\\Turkmenportal\\{dirname}\\{count_photos}.png")
+                        self.Find.image(i, f"Parse_Files\\Turkmenportal_{cur_datetime}\\{dirname}\\{count_photos}.png")
                         count_photos += 1
 
 

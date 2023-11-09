@@ -108,7 +108,11 @@ class Naydizdes:
         # self.stop_thread_check("buttons")
         self.parse_cards(path, take_photos)
 
+
     def parse_cards(self, path, take_photos):
+
+        cur_datetime = datetime.datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
+
         self.output("[Naydizdes] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Naydizdes.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
@@ -180,13 +184,13 @@ class Naydizdes:
                     info["Ссылка на скриншоты"] = path + dirname
 
                     try:
-                        makedirs(f"Parse_Files\\Naydizdes\\{dirname}")
+                        makedirs(f"Parse_Files\\Naydizdes_{cur_datetime}\\{dirname}")
                     except FileExistsError:
                         pass
 
                     count_photos = 1
                     for i in photos:
-                        self.Find.image(i, f"Parse_Files\\Naydizdes\\{dirname}\\{count_photos}.png", method=2)
+                        self.Find.image(i, f"Parse_Files\\Naydizdes_{cur_datetime}\\{dirname}\\{count_photos}.png", method=2)
                         count_photos += 1
 
             estate_list.append(info)

@@ -1,6 +1,7 @@
 from os import makedirs
 from selenium.common.exceptions import SessionNotCreatedException as SNCE
 from selenium.common.exceptions import NoSuchDriverException as NSDE
+from datetime import datetime
 
 class Jayym:
 
@@ -81,6 +82,9 @@ class Jayym:
         self.parse_cards(path, take_photos)
 
     def parse_cards(self, path, take_photos):
+        
+        cur_datetime = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
+
         self.output("[Jayym] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Jayym.txt", "r", encoding="utf8") as file:
             link_list = file.readline().split(",")[:-1]
@@ -160,13 +164,13 @@ class Jayym:
 
                 if flag:
                     try:
-                        makedirs(f"Parse_Files\\Jayym\\{filename}")
+                        makedirs(f"Parse_Files\\Jayym_{cur_datetime}\\{filename}")
                     except FileExistsError:
                         pass
 
                     count_photo = 1
                     for i in photos:
-                        self.Find.image(i, f"Parse_Files\\Jayym\\{filename}\\{count_photo}.png")
+                        self.Find.image(i, f"Parse_Files\\Jayym_{cur_datetime}\\{filename}\\{count_photo}.png")
                         count_photo += 1
     
                     info["Ссылка на скриншоты"] = path + filename

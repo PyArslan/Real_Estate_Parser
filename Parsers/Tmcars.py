@@ -104,6 +104,9 @@ class Tmcars:
         self.parse_cards(path, take_photos)
 
     def parse_cards(self, path, take_photos):
+
+        cur_datetime = datetime.datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
+
         self.output("[Tmcars] Начинаю парсинг объявлений...\n")
         with open(f"Parse_Files\\Links_Tmcars.txt", "r", encoding="utf8") as file:
                 link_list = file.readline().split(",")[:-1]
@@ -232,7 +235,7 @@ class Tmcars:
                     # print(photos)
 
                     try:
-                        makedirs(f"Parse_Files\\Tmcars\\{dirname}")
+                        makedirs(f"Parse_Files\\Tmcars_{cur_datetime}\\{dirname}")
                     except FileExistsError:
                         pass
 
@@ -240,7 +243,7 @@ class Tmcars:
 
                     for i in photos:
                         try:
-                            self.Find.image(i, f"Parse_Files\\Tmcars\\{dirname}\\{count_photos}.png")
+                            self.Find.image(i, f"Parse_Files\\Tmcars_{cur_datetime}\\{dirname}\\{count_photos}.png")
                             count_photos += 1
                         except ValueError as e:
                             print(f"[ValueError] {e}")
